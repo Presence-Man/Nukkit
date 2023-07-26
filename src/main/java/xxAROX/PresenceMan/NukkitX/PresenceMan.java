@@ -20,7 +20,7 @@ public class PresenceMan extends PluginBase {
     private static String token = "undefined";
     private static String client_id = null;
     public static String server = "undefined";
-    public static Boolean enable_default = true;
+    public static Boolean enable_default = false;
 
     public static Map<String, ApiActivity> presences = new HashMap<>();
     public static ApiActivity default_activity;
