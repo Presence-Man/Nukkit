@@ -36,8 +36,6 @@ public class BackendRequest extends AsyncTask {
 
     @Override
     public void onRun() {
-        System.out.println("Running");
-
         ApiRequest apiRequest = ApiRequest.deserialize(request);
         Map<String, String> headers = apiRequest.getHeaders();
 
