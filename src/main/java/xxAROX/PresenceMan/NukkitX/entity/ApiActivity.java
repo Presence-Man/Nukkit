@@ -9,7 +9,6 @@ import xxAROX.PresenceMan.NukkitX.PresenceMan;
 import javax.annotation.Nullable;
 import java.io.InputStreamReader;
 
-@AllArgsConstructor
 @NoArgsConstructor
 @ToString
 @Getter @Setter @Accessors(chain = true)
@@ -24,6 +23,30 @@ public class ApiActivity {
     public String small_icon_text = null;
     public Integer party_max_player_count = null;
     public Integer party_player_count = null;
+
+    public ApiActivity(ActivityType type, String state, String details, Long end, String large_icon_key, String large_icon_text, String small_icon_key, String small_icon_text, Integer party_max_player_count, Integer party_player_count){
+        this.type = type;
+        this.state = state;
+        this.details = details;
+        this.end = end;
+        this.large_icon_key = large_icon_key;
+        this.large_icon_text = large_icon_text;
+        this.small_icon_key = small_icon_key;
+        this.small_icon_text = small_icon_text;
+        this.party_max_player_count = party_max_player_count;
+        this.party_player_count = party_player_count;
+    }
+
+    public ApiActivity(ActivityType type, String state, String details, Long end, String large_icon_key, String large_icon_text, String small_icon_key, String small_icon_text){
+        this.type = type;
+        this.state = state;
+        this.details = details;
+        this.end = end;
+        this.large_icon_key = large_icon_key;
+        this.large_icon_text = large_icon_text;
+        this.small_icon_key = small_icon_key;
+        this.small_icon_text = small_icon_text;
+    }
 
     public String serialize(){
         JsonObject json = new JsonObject();

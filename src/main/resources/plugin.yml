@@ -1,6 +1,6 @@
 name: "Presence-Man"
 version: "0.1.0"
-# api: [ "5.0.0" ] # TODO
+api: 1.0.0
 main: xxAROX.PresenceMan.NukkitX.PresenceMan
 description: "Presence-Man client for nukkit to support this server in discord rich-presence."
 website: "https://github.com/Presence-Man"
