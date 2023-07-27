@@ -2,6 +2,7 @@ package xxAROX.PresenceMan.NukkitX;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.entity.data.Skin;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
@@ -11,8 +12,10 @@ import com.google.gson.JsonSyntaxException;
 import xxAROX.PresenceMan.NukkitX.entity.ActivityType;
 import xxAROX.PresenceMan.NukkitX.entity.ApiActivity;
 import xxAROX.PresenceMan.NukkitX.entity.ApiRequest;
+import xxAROX.PresenceMan.NukkitX.entity.Gateway;
 import xxAROX.PresenceMan.NukkitX.tasks.async.BackendRequest;
 import xxAROX.PresenceMan.NukkitX.tasks.async.FetchGatewayInformationTask;
+import xxAROX.PresenceMan.NukkitX.utils.SkinUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -55,16 +58,10 @@ public class PresenceMan extends PluginBase {
                 System.getenv("PRESENCE_MAN_DEFAULT_DETAILS") : config.getString("default_details", null);
 
         String DEFAULT_LARGE_IMAGE_KEY = System.getenv("PRESENCE_MAN_DEFAULT_LARGE_IMAGE_KEY") != null && !System.getenv("PRESENCE_MAN_DEFAULT_LARGE_IMAGE_KEY").isEmpty() ?
-                System.getenv("PRESENCE_MAN_DEFAULT_LARGE_IMAGE_KEY") : config.getString("default_large_image_key", null);
+                System.getenv("PRESENCE_MAN_DEFAULT_LARGE_IMAGE_KEY") : config.getString("default_large_image_key", "bedrock");
 
         String DEFAULT_LARGE_IMAGE_TEXT = System.getenv("PRESENCE_MAN_DEFAULT_LARGE_IMAGE_TEXT") != null && !System.getenv("PRESENCE_MAN_DEFAULT_LARGE_IMAGE_TEXT").isEmpty() ?
-                System.getenv("PRESENCE_MAN_DEFAULT_LARGE_IMAGE_TEXT") : config.getString("default_large_image_text", null);
-
-        String DEFAULT_SMALL_IMAGE_KEY = System.getenv("PRESENCE_MAN_DEFAULT_SMALL_IMAGE_KEY") != null && !System.getenv("PRESENCE_MAN_DEFAULT_SMALL_IMAGE_KEY").isEmpty() ?
-                System.getenv("PRESENCE_MAN_DEFAULT_SMALL_IMAGE_KEY") : config.getString("default_small_image_key", null);
-
-        String DEFAULT_SMALL_IMAGE_TEXT = System.getenv("PRESENCE_MAN_DEFAULT_SMALL_IMAGE_TEXT") != null && !System.getenv("PRESENCE_MAN_DEFAULT_SMALL_IMAGE_TEXT").isEmpty() ?
-                System.getenv("PRESENCE_MAN_DEFAULT_SMALL_IMAGE_TEXT") : config.getString("default_small_image_text", null);
+                System.getenv("PRESENCE_MAN_DEFAULT_LARGE_IMAGE_TEXT") : config.getString("default_large_image_text", "Minecraft: Bedrock Edition");
 
         default_activity = new ApiActivity(
                 ActivityType.PLAYING,
@@ -72,9 +69,7 @@ public class PresenceMan extends PluginBase {
                 DEFAULT_DETAILS,
                 null,
                 DEFAULT_LARGE_IMAGE_KEY,
-                DEFAULT_LARGE_IMAGE_TEXT,
-                DEFAULT_SMALL_IMAGE_KEY,
-                DEFAULT_SMALL_IMAGE_TEXT
+                DEFAULT_LARGE_IMAGE_TEXT
         );
     }
 
@@ -86,6 +81,7 @@ public class PresenceMan extends PluginBase {
 
     @Override
     public void onDisable() {
+        for (Player player : Server.getInstance().getOnlinePlayers().values()) offline(player);
     }
 
     public static void setActivity(Player player, ApiActivity activity) {
@@ -120,6 +116,10 @@ public class PresenceMan extends PluginBase {
         ));
     }
 
+    public static String getHeadUrl(String xuid){
+        return Gateway.getUrl() + "/api/v1/heads/" + xuid;
+    }
+
     public static void offline(Player player) {
         ApiRequest request = new ApiRequest(ApiRequest.URI_OFFLINE, Map.of(
                 "ip", player.getAddress(),
@@ -135,6 +135,32 @@ public class PresenceMan extends PluginBase {
                         PresenceMan.presences.remove(player.getLoginChainData().getXUID());
                     }
                 },
+                error -> {},
+                10
+        );
+        if (!Server.getInstance().isRunning()) task.run();
+        else Server.getInstance().getScheduler().scheduleAsyncTask(PresenceMan.getInstance(), task);
+    }
+
+    public static void save_head(Player player, Skin skin){
+        if (!Server.getInstance().isRunning()) return;
+        if (!player.isConnected()) return;
+        if (player.getLoginChainData().getXUID().isEmpty()) return;
+
+        String head = SkinUtils.getHead(player, skin);
+        assert head != null;
+        if (head.isEmpty()) return;
+
+        ApiRequest request = new ApiRequest(ApiRequest.URI_UPDATE_HEAD, Map.of(
+                "ip", player.getAddress(),
+                "xuid", player.getLoginChainData().getXUID(),
+                "head", head
+        ), true);
+        request.header("Token", token);
+
+        BackendRequest task = new BackendRequest(
+                request.serialize(),
+                response -> {},
                 error -> {},
                 10
         );

@@ -12,6 +12,7 @@ public class ApiRequest {
     private String uri;
 
     public static final String URI_UPDATE_PRESENCE = "/api/v1/servers/update_presence";
+    public static final String URI_UPDATE_HEAD = "/api/v1/heads/update";
     public static final String URI_OFFLINE = "/api/v1/servers/offline";
 
     public ApiRequest(String uri, Map<String, Object> body, boolean postMethod) {
