@@ -3,6 +3,7 @@ package xxAROX.PresenceMan.NukkitX;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.plugin.PluginBase;
+import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -127,7 +128,7 @@ public class PresenceMan extends PluginBase {
 
         request.header("Token", PresenceMan.token);
 
-        PresenceMan.getInstance().getServer().getScheduler().scheduleAsyncTask(PresenceMan.getInstance(), new BackendRequest(
+        BackendRequest task = new BackendRequest(
                 request.serialize(),
                 response -> {
                     if (response.containsKey("code") && response.get("code").equals(200)) {
@@ -136,7 +137,9 @@ public class PresenceMan extends PluginBase {
                 },
                 error -> {},
                 10
-        ));
+        );
+        if (!Server.getInstance().isRunning()) task.run();
+        else Server.getInstance().getScheduler().scheduleAsyncTask(PresenceMan.getInstance(), task);
     }
 
     public static PresenceMan getInstance() {
