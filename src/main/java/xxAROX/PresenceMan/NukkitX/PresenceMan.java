@@ -103,7 +103,7 @@ public class PresenceMan extends PluginBase {
                     String responseBody = response.get("body").toString();
                     Map<String, Object> responseBodyMap = GSON.fromJson(responseBody, new TypeToken<Map<String, Object>>() {
                     }.getType());
-                    if (responseBodyMap.containsKey("status") && responseBodyMap.get("status").equals(200)) {
+                    if (responseBodyMap.containsKey("status") && responseBodyMap.get("status").toString().contains("200")) {
                         PresenceMan.presences.put(player.getLoginChainData().getXUID(), activity);
                     } else {
                         try {
