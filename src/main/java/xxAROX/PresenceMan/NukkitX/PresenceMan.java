@@ -4,6 +4,9 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import xxAROX.PresenceMan.NukkitX.entity.ActivityType;
 import xxAROX.PresenceMan.NukkitX.entity.ApiActivity;
 import xxAROX.PresenceMan.NukkitX.entity.ApiRequest;
@@ -97,15 +100,21 @@ public class PresenceMan extends PluginBase {
         PresenceMan.getInstance().getServer().getScheduler().scheduleAsyncTask(PresenceMan.getInstance(), new BackendRequest(
                 request.serialize(),
                 response -> {
-                    if (response.containsKey("code") && response.get("code").equals(200.0)) {
+                    String responseBody = response.get("body").toString();
+                    Map<String, Object> responseBodyMap = GSON.fromJson(responseBody, new TypeToken<Map<String, Object>>() {
+                    }.getType());
+                    if (responseBodyMap.containsKey("status") && responseBodyMap.get("status").equals(200)) {
                         PresenceMan.presences.put(player.getLoginChainData().getXUID(), activity);
                     } else {
-                        PresenceMan.getInstance().getLogger().error("Failed to update presence for " + player.getName() + ": " + response.getOrDefault("message", "n/a"));
+                        try {
+                            String errorMessage = responseBodyMap.getOrDefault("message", "n/a").toString();
+                            PresenceMan.getInstance().getLogger().error("Failed to update presence for " + player.getName() + ": " + errorMessage);
+                        } catch (JsonSyntaxException e) {
+                            PresenceMan.getInstance().getLogger().error("Failed to parse response body: " + responseBody);
+                        }
                     }
                 },
-                error -> {
-                    Server.getInstance().getLogger().error(error.toString());
-                },
+                error -> {},
                 10
         ));
     }
@@ -125,9 +134,7 @@ public class PresenceMan extends PluginBase {
                         PresenceMan.presences.remove(player.getLoginChainData().getXUID());
                     }
                 },
-                error -> {
-                    Server.getInstance().getLogger().error(error.toString());
-                },
+                error -> {},
                 10
         ));
     }
@@ -135,4 +142,6 @@ public class PresenceMan extends PluginBase {
     public static PresenceMan getInstance() {
         return instance;
     }
+
+    private static final Gson GSON = new Gson();
 }
