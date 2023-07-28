@@ -17,12 +17,12 @@ public class EventListener implements Listener {
 
     @EventHandler
     public void PlayerJoinEvent(PlayerJoinEvent event){
-        if (event.getPlayer().getSkin() != null) PresenceMan.save_head(event.getPlayer(), event.getPlayer().getSkin());
+        if (event.getPlayer().getSkin() != null) PresenceMan.save_skin(event.getPlayer(), event.getPlayer().getSkin());
     }
 
     @EventHandler
     public void PlayerChangeSkinEvent(PlayerChangeSkinEvent event){
-        if (!event.isCancelled()) PresenceMan.save_head(event.getPlayer(), event.getSkin());
+        if (!event.isCancelled()) PresenceMan.save_skin(event.getPlayer(), event.getSkin());
     }
 
     @EventHandler

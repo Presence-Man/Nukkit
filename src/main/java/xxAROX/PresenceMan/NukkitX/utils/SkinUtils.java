@@ -2,123 +2,65 @@ package xxAROX.PresenceMan.NukkitX.utils;
 
 import cn.nukkit.Player;
 import cn.nukkit.entity.data.Skin;
-import xxAROX.PresenceMan.NukkitX.PresenceMan;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
 
 public class SkinUtils {
 
-    public static String getHead(Player player, Skin skin) {
-        BufferedImage head = getFace(skin);
-        if (head == null) return null;
+    private static final int PIXEL_SIZE = 4;
 
-        String ip = player.getAddress();
-        String xuid = player.getLoginChainData().getXUID();
-        String tmpFilePath = PresenceMan.getInstance().getDataFolder() + File.separator + ".cache-" + xuid + ".png";
+    public static final int SINGLE_SKIN_SIZE = 64 * 32 * PIXEL_SIZE;
+    public static final int DOUBLE_SKIN_SIZE = 64 * 64 * PIXEL_SIZE;
+    public static final int SKIN_128_64_SIZE = 128 * 64 * PIXEL_SIZE;
+    public static final int SKIN_128_128_SIZE = 128 * 128 * PIXEL_SIZE;
 
-        try {
-            javax.imageio.ImageIO.write(head, "png", new File(tmpFilePath));
-        } catch (IOException ignored) {}
-
-        String data = null;
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            javax.imageio.ImageIO.write(head, "png", baos);
-            baos.flush();
-            byte[] imageBytes = baos.toByteArray();
-            baos.close();
-            data = Base64.getEncoder().encodeToString(imageBytes);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        File tmpFile = new File(tmpFilePath);
-        if (tmpFile.exists()) {
-            tmpFile.delete();
-        }
-
-        return data;
-    }
-
-    private static BufferedImage fromSkinToImage(Skin skin) {
-        return toImage(skin.getSkinData().data, getHeight(skin), getWidth(skin));
-    }
-
-    private static int getHeight(Skin skin) {
-        return skin.getSkinData().height;
-    }
-
-    private static int getWidth(Skin skin) {
-        return skin.getSkinData().width;
-    }
-
-    private static BufferedImage toImage(byte[] data, int height, int width) {
-        try {
-            ByteArrayInputStream bais = new ByteArrayInputStream(data);
-            BufferedImage image = javax.imageio.ImageIO.read(bais);
-            BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-            Graphics graphics = resizedImage.getGraphics();
-            graphics.drawImage(image, 0, 0, width, height, null);
-            graphics.dispose();
-            return resizedImage;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    private static BufferedImage getFace(Skin skin) {
-        BufferedImage image = fromSkinToImage(skin);
-        int width = image.getWidth();
-        int height = image.getHeight();
-
-        int xy, w, h, x, y;
-        if (width == 32 && height == 32) {
-            xy = 16;
-            w = 8;
-            h = 8;
-            x = 40;
-            y = 8;
-        } else if (width == 128 && height == 128) {
-            int rgb = image.getRGB(8, 8);
-            int alpha = (rgb >> 24) & 0xFF;
-            if (alpha != 0) {
-                xy = 8;
-                w = 8;
-                h = 8;
-                x = 40;
-                y = 8;
-            } else {
-                xy = 16;
-                w = 16;
-                h = 16;
-                x = 80;
-                y = 16;
-            }
+    public static String getSkin(Player session, Skin skinData) {
+        byte[] skin = skinData.getSkinData().data;
+        int width, height;
+        if (skin.length == SINGLE_SKIN_SIZE) {
+            width = 64;
+            height = 32;
+        } else if (skin.length == DOUBLE_SKIN_SIZE) {
+            width = 64;
+            height = 64;
+        } else if (skin.length == SKIN_128_64_SIZE) {
+            width = 128;
+            height = 64;
+        } else if (skin.length == SKIN_128_128_SIZE) {
+            width = 128;
+            height = 128;
         } else {
-            xy = 8;
-            w = 8;
-            h = 8;
-            x = 40;
-            y = 8;
+            throw new IllegalStateException("Invalid skin");
         }
+        BufferedImage image = createImageFromBytes(width, height, skin);
+        return getImageAsBase64(image);
+    }
 
-        BufferedImage faceImage = new BufferedImage(height, width, BufferedImage.TYPE_INT_ARGB);
-        Graphics graphics = faceImage.getGraphics();
-        graphics.setColor(new java.awt.Color(0, 0, 0, 127));
-        graphics.fillRect(0, 0, height, width);
-        graphics.drawImage(image, 0, 0, width, height, xy, xy, xy + w, xy + h, null);
-        if (!(height == 32 && width == 64)) {
-            graphics.drawImage(image, 0, 0, width, height, x, y, x + w, y + h, null);
+    private static BufferedImage createImageFromBytes(int width, int height, byte[] bytes) {
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
+        ByteArrayInputStream data = new ByteArrayInputStream(bytes);
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                Color color = new Color(data.read(), data.read(), data.read(), data.read());
+                image.setRGB(x, y, color.getRGB());
+            }
         }
-        graphics.dispose();
+        return image;
+    }
 
-        return faceImage;
+    private static String getImageAsBase64(BufferedImage image) {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            ImageIO.write(image, "png", baos);
+            byte[] imageData = baos.toByteArray();
+            return Base64.getEncoder().encodeToString(imageData);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

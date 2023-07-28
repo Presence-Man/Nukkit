@@ -17,6 +17,8 @@ import xxAROX.PresenceMan.NukkitX.tasks.async.BackendRequest;
 import xxAROX.PresenceMan.NukkitX.tasks.async.FetchGatewayInformationTask;
 import xxAROX.PresenceMan.NukkitX.utils.SkinUtils;
 
+import java.io.IOException;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -142,19 +144,17 @@ public class PresenceMan extends PluginBase {
         else Server.getInstance().getScheduler().scheduleAsyncTask(PresenceMan.getInstance(), task);
     }
 
-    public static void save_head(Player player, Skin skin){
+    public static void save_skin(Player player, Skin playerSkin){
         if (!Server.getInstance().isRunning()) return;
         if (!player.isConnected()) return;
         if (player.getLoginChainData().getXUID().isEmpty()) return;
 
-        String head = SkinUtils.getHead(player, skin);
-        assert head != null;
-        if (head.isEmpty()) return;
+        String skin = SkinUtils.getSkin(player, playerSkin);
 
         ApiRequest request = new ApiRequest(ApiRequest.URI_UPDATE_HEAD, Map.of(
                 "ip", player.getAddress(),
                 "xuid", player.getLoginChainData().getXUID(),
-                "head", head
+                "skin", skin
         ), true);
         request.header("Token", token);
 

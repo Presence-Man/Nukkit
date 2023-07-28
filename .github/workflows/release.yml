@@ -38,8 +38,8 @@ jobs:
       - name: "Rename JAR"
         run: |
           cd target/
-          cp Nukkit-X-1.0-SNAPSHOT.jar Presence-Man-Nukkit-X-v${{ steps.metadata.outputs.VERSION }}.jar
-          cp Nukkit-X-1.0-SNAPSHOT.jar Presence-Man-Nukkit-X.jar
+          cp Nukkit-1.0-SNAPSHOT.jar Presence-Man-Nukkit-v${{ steps.metadata.outputs.VERSION }}.jar
+          cp Nukkit-1.0-SNAPSHOT.jar Presence-Man-Nukkit.jar
           cd ../
 
       - name: "Create Release"
@@ -50,7 +50,7 @@ jobs:
           automatic_release_tag: "v${{ steps.metadata.outputs.VERSION }}"
           prerelease: false
           title: "Release v${{ steps.metadata.outputs.VERSION }}"
-          files: "target/Presence-Man-Nukkit-X-v${{ steps.metadata.outputs.VERSION }}.jar"
+          files: "target/Presence-Man-Nukkit-v${{ steps.metadata.outputs.VERSION }}.jar"
 
       - name: Release to public
         uses: softprops/action-gh-release@v1
@@ -59,4 +59,4 @@ jobs:
           name: "Latest releases"
           repository: "Presence-Man/releases"
           token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
-          files: "target/Presence-Man-Nukkit-X.jar"
+          files: "target/Presence-Man-Nukkit.jar"

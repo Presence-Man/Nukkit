@@ -19,33 +19,18 @@ public class ApiActivity {
     public Long end = null;
     public String large_icon_key = null;
     public String large_icon_text = null;
-    public String small_icon_key = null;
-    public String small_icon_text = null;
     public Integer party_max_player_count = null;
     public Integer party_player_count = null;
 
-    public ApiActivity(ActivityType type, String state, String details, Long end, String large_icon_key, String large_icon_text, String small_icon_key, String small_icon_text, Integer party_max_player_count, Integer party_player_count){
+    public ApiActivity(ActivityType type, String state, String details, Long end, String large_icon_key, String large_icon_text, Integer party_max_player_count, Integer party_player_count){
         this.type = type;
         this.state = state;
         this.details = details;
         this.end = end;
         this.large_icon_key = large_icon_key;
         this.large_icon_text = large_icon_text;
-        this.small_icon_key = small_icon_key;
-        this.small_icon_text = small_icon_text;
         this.party_max_player_count = party_max_player_count;
         this.party_player_count = party_player_count;
-    }
-
-    public ApiActivity(ActivityType type, String state, String details, Long end, String large_icon_key, String large_icon_text, String small_icon_key, String small_icon_text){
-        this.type = type;
-        this.state = state;
-        this.details = details;
-        this.end = end;
-        this.large_icon_key = large_icon_key;
-        this.large_icon_text = large_icon_text;
-        this.small_icon_key = small_icon_key;
-        this.small_icon_text = small_icon_text;
     }
 
     public ApiActivity(ActivityType type, String state, String details, Long end, String large_icon_key, String large_icon_text){
@@ -65,8 +50,6 @@ public class ApiActivity {
         json.addProperty("end", end);
         json.addProperty("large_icon_key", large_icon_key);
         json.addProperty("large_icon_text", large_icon_text);
-        json.addProperty("small_icon_key", small_icon_key);
-        json.addProperty("small_icon_text", small_icon_text);
         json.addProperty("party_max_player_count", party_max_player_count);
         json.addProperty("party_player_count", party_player_count);
         return json.toString();
@@ -81,11 +64,9 @@ public class ApiActivity {
         Long end = (json.has("end") && !json.get("end").isJsonNull() ? json.get("end").getAsLong() : null);
         String large_icon_key = (json.has("large_icon_key") && !json.get("large_icon_key").isJsonNull() ? json.get("large_icon_key").getAsString() : null);
         String large_icon_text = (json.has("large_icon_text") && !json.get("large_icon_text").isJsonNull() ? json.get("large_icon_text").getAsString() : null);
-        String small_icon_key = (json.has("small_icon_key") && !json.get("small_icon_key").isJsonNull() ? json.get("small_icon_key").getAsString() : null);
-        String small_icon_text = (json.has("small_icon_text") && !json.get("small_icon_text").isJsonNull() ? json.get("small_icon_text").getAsString() : null);
         Integer party_max_player_count = (json.has("party_max_player_count") && !json.get("party_max_player_count").isJsonNull() ? json.get("party_max_player_count").getAsInt() : null);
         Integer party_player_count = (json.has("'party_player_count'") && !json.get("'party_player_count'").isJsonNull() ? json.get("'party_player_count'").getAsInt() : null);
-        return new ApiActivity(type, state, details, end, large_icon_key, large_icon_text, small_icon_key, small_icon_text, party_max_player_count, party_player_count);
+        return new ApiActivity(type, state, details, end, large_icon_key, large_icon_text, party_max_player_count, party_player_count);
     }
 
     public final static class Defaults {
