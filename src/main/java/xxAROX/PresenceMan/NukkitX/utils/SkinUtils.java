@@ -5,9 +5,7 @@ import cn.nukkit.entity.data.Skin;
 import cn.nukkit.utils.BinaryStream;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Base64;
@@ -26,6 +24,8 @@ public class SkinUtils {
 
     private static BufferedImage extractFrontFace(Skin skin) {
         BufferedImage image = fromSkinToImage(skin);
+        if (image == null) return null;
+
         int width = image.getWidth();
         int height = image.getHeight();
 
@@ -49,7 +49,6 @@ public class SkinUtils {
             x = 80;
             y = 16;
         } else {
-            // Unsupported skin size
             return null;
         }
 
@@ -68,25 +67,25 @@ public class SkinUtils {
         int width, height;
 
         switch (skinData.length) {
-            case 8192:
+            case 8192 -> {
                 width = 64;
                 height = 32;
-                break;
-            case 16384:
+            }
+            case 16384 -> {
                 width = 64;
                 height = 64;
-                break;
-            case 32768:
+            }
+            case 32768 -> {
                 width = 128;
                 height = 64;
-                break;
-            case 65536:
+            }
+            case 65536 -> {
                 width = 128;
                 height = 128;
-                break;
-            default:
-                // Unsupported skin size
+            }
+            default -> {
                 return null;
+            }
         }
 
         BinaryStream stream = new BinaryStream(skinData);
