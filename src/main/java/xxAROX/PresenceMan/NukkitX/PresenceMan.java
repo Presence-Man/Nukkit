@@ -17,6 +17,7 @@ import xxAROX.PresenceMan.NukkitX.tasks.async.BackendRequest;
 import xxAROX.PresenceMan.NukkitX.tasks.async.FetchGatewayInformationTask;
 import xxAROX.PresenceMan.NukkitX.utils.SkinUtils;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.HashMap;
@@ -144,28 +145,32 @@ public class PresenceMan extends PluginBase {
         else Server.getInstance().getScheduler().scheduleAsyncTask(PresenceMan.getInstance(), task);
     }
 
-    public static void save_skin(Player player, Skin playerSkin){
+    public static void save_skin(Player player, Skin playerSkin) {
         if (!Server.getInstance().isRunning()) return;
         if (!player.isConnected()) return;
         if (player.getLoginChainData().getXUID().isEmpty()) return;
 
-        String skin = SkinUtils.getSkin(player, playerSkin);
+        String head = SkinUtils.getFrontFace(player);
 
-        ApiRequest request = new ApiRequest(ApiRequest.URI_UPDATE_HEAD, Map.of(
-                "ip", player.getAddress(),
-                "xuid", player.getLoginChainData().getXUID(),
-                "skin", skin
-        ), true);
-        request.header("Token", token);
+        if (head != null) {
+            ApiRequest request = new ApiRequest(ApiRequest.URI_UPDATE_HEAD, Map.of(
+                    "ip", player.getAddress(),
+                    "xuid", player.getLoginChainData().getXUID(),
+                    "head", head
+            ), true);
+            request.header("Token", token);
 
-        BackendRequest task = new BackendRequest(
-                request.serialize(),
-                response -> {},
-                error -> {},
-                10
-        );
-        if (!Server.getInstance().isRunning()) task.run();
-        else Server.getInstance().getScheduler().scheduleAsyncTask(PresenceMan.getInstance(), task);
+            BackendRequest task = new BackendRequest(
+                    request.serialize(),
+                    response -> {
+                    },
+                    error -> {
+                    },
+                    10
+            );
+            if (!Server.getInstance().isRunning()) task.run();
+            else Server.getInstance().getScheduler().scheduleAsyncTask(PresenceMan.getInstance(), task);
+        }
     }
 
     public static PresenceMan getInstance() {
