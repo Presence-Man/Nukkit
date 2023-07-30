@@ -173,6 +173,10 @@ public class PresenceMan extends PluginBase {
         }
     }
 
+    public void applyToken(ApiRequest request){
+        request.header("Token", token);
+    }
+
     public static PresenceMan getInstance() {
         return instance;
     }

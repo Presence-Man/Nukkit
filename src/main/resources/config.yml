@@ -28,4 +28,4 @@ default_details: ""
 default_large_image_key: "presence-man"
 # Server name
 # Environment variable named 'PRESENCE_MAN_DEFAULT_LARGE_IMAGE_TEXT' overwrites this value.
-default_large_image_text: ~
+default_large_image_text: "{App.name} - v{App.version}"

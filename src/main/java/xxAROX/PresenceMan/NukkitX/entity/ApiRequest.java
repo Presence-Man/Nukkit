@@ -1,6 +1,8 @@
 package xxAROX.PresenceMan.NukkitX.entity;
 
+import cn.nukkit.Server;
 import com.google.gson.Gson;
+import xxAROX.PresenceMan.NukkitX.PresenceMan;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +23,9 @@ public class ApiRequest {
         this.postMethod = postMethod;
         this.headers = new HashMap<>();
         this.headers.put("Content-Type", "application/json");
+
+        PresenceMan.getInstance().applyToken(this);
+        this.header("Serversoftware", Server.getInstance().getCodename());
     }
 
     public String serialize() {
