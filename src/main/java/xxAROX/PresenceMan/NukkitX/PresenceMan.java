@@ -95,8 +95,6 @@ public class PresenceMan extends PluginBase {
                 "api_activity", activity
         ), true);
 
-        request.header("Token", PresenceMan.token);
-
         PresenceMan.getInstance().getServer().getScheduler().scheduleAsyncTask(PresenceMan.getInstance(), new BackendRequest(
                 request.serialize(),
                 response -> {
@@ -129,8 +127,6 @@ public class PresenceMan extends PluginBase {
                 "xuid", player.getLoginChainData().getXUID()
         ), true);
 
-        request.header("Token", PresenceMan.token);
-
         BackendRequest task = new BackendRequest(
                 request.serialize(),
                 response -> {
@@ -158,7 +154,6 @@ public class PresenceMan extends PluginBase {
                     "xuid", player.getLoginChainData().getXUID(),
                     "head", head
             ), true);
-            request.header("Token", token);
 
             BackendRequest task = new BackendRequest(
                     request.serialize(),
