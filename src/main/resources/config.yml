@@ -10,6 +10,12 @@ client_id: "1133823892486623344"
 server: "Development-Server"
 
 
+# When this isn't a lobby server, set this to false
+# This is to prevent get rate-limited.
+update_skin: true
+
+
+# Presence configuration:
 
 # Enable default activity
 # Environment variable named 'PRESENCE_MAN_DEFAULT_ENABLED' overwrites this value.

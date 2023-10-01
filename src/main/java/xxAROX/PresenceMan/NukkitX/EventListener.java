@@ -12,12 +12,8 @@ public class EventListener implements Listener {
     @EventHandler
     public void PlayerLoginEvent(PlayerLoginEvent event){
         if (!PresenceMan.enable_default) return;
+        if (event.getPlayer().getSkin() != null && PresenceMan.update_skin) PresenceMan.save_skin(event.getPlayer(), event.getPlayer().getSkin());
         PresenceMan.setActivity(event.getPlayer(), PresenceMan.default_activity);
-    }
-
-    @EventHandler
-    public void PlayerJoinEvent(PlayerJoinEvent event){
-        if (event.getPlayer().getSkin() != null) PresenceMan.save_skin(event.getPlayer(), event.getPlayer().getSkin());
     }
 
     @EventHandler

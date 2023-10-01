@@ -31,6 +31,7 @@ public class PresenceMan extends PluginBase {
     private static String client_id = null;
     public static String server = "undefined";
     public static Boolean enable_default = false;
+    public static Boolean update_skin = false;
 
     public static Map<String, ApiActivity> presences = new HashMap<>();
     public static ApiActivity default_activity;
@@ -52,6 +53,10 @@ public class PresenceMan extends PluginBase {
 
         enable_default = System.getenv("PRESENCE_MAN_DEFAULT_ENABLED") != null && !System.getenv("PRESENCE_MAN_DEFAULT_ENABLED").isEmpty() ?
                 System.getenv("PRESENCE_MAN_DEFAULT_ENABLED").equalsIgnoreCase("true") :
+                config.getBoolean("enable_default", enable_default);
+
+        update_skin = System.getenv("PRESENCE_MAN_UPDATE_SKIN") != null && !System.getenv("PRESENCE_MAN_UPDATE_SKIN").isEmpty() ?
+                System.getenv("PRESENCE_MAN_UPDATE_SKIN").equalsIgnoreCase("true") :
                 config.getBoolean("enable_default", enable_default);
 
         String DEFAULT_STATE = System.getenv("PRESENCE_MAN_DEFAULT_STATE") != null && !System.getenv("PRESENCE_MAN_DEFAULT_STATE").isEmpty() ?
