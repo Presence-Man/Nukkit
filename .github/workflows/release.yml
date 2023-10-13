@@ -52,6 +52,21 @@ jobs:
           title: "Release v${{ steps.metadata.outputs.VERSION }}"
           files: "target/Presence-Man-Nukkit-v${{ steps.metadata.outputs.VERSION }}.jar"
 
+      - name: "Create version-nukkit.txt"
+        run: "echo \"${{ steps.metadata.outputs.VERSION }}\" >> version-nukkit.txt"
+
+      - name: "Pushes latest version-nukkit.txt file"
+        uses: dmnemec/copy_file_to_another_repo_action@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
+        with:
+          source_file: 'version-nukkit.txt'
+          destination_repo: 'Presence-Man/releases'
+          destination_folder: ''
+          user_email: 'arox.email.0@gmail.com'
+          user_name: 'xxAROX'
+          commit_message: 'Updated "Nukkit Client" version'
+
       - name: Release to public
         uses: softprops/action-gh-release@v1
         with:
