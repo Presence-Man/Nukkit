@@ -2,7 +2,6 @@ package xxAROX.PresenceMan.NukkitX.tasks.async;
 
 import cn.nukkit.Server;
 import cn.nukkit.scheduler.AsyncTask;
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +31,7 @@ public class FetchGatewayInformationTask extends AsyncTask {
                 if (response.code() == 200) {
                     try {
                         String responseBody = Objects.requireNonNull(response.body()).string();
-                        JsonObject result = parseJsonResponse(responseBody);
+                        JsonObject result = PresenceMan.GSON.fromJson(responseBody, JsonObject.class);
                         if (result != null && !result.isEmpty()) {
                             Integer port = result.has("port") && !result.get("port").isJsonNull() ? result.get("port").getAsInt() : null;
                             Gateway.protocol = result.get("protocol").getAsString();
@@ -58,11 +57,6 @@ public class FetchGatewayInformationTask extends AsyncTask {
                 PresenceMan.getInstance().getServer().getPluginManager().disablePlugin(PresenceMan.getInstance());
             }
         });
-    }
-
-    private JsonObject parseJsonResponse(String responseBody) {
-        Gson gson = new Gson();
-        return gson.fromJson(responseBody, JsonObject.class);
     }
 
     public static void ping_backend(Consumer<Boolean> callback) {
