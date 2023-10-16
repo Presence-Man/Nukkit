@@ -1,16 +1,14 @@
 package xxAROX.PresenceMan.NukkitX.entity;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 
-@Getter
 @AllArgsConstructor
 public enum ActivityType {
+    COMPETING("COMPETING"),
+    LISTENING("LISTENING"),
     PLAYING("PLAYING"),
     STREAMING("STREAMING"),
-    LISTENING("LISTENING"),
     UNUSED("UNUSED"),
-    COMPETING("COMPETING")
     ;
     private String value;
     @Override

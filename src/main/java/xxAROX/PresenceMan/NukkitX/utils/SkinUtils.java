@@ -12,13 +12,9 @@ import java.util.Base64;
 
 public class SkinUtils {
 
-    public static String getFrontFace(Player player) {
-        Skin skinData = player.getSkin();
+    public static String getFrontFace(Player player, Skin skinData) {
         BufferedImage faceImage = extractFrontFace(skinData);
-        if (faceImage == null) {
-            return null;
-        }
-
+        if (faceImage == null) return null;
         return encodeImageToBase64(faceImage);
     }
 
@@ -48,16 +44,12 @@ public class SkinUtils {
             h = 16;
             x = 80;
             y = 16;
-        } else {
-            return null;
-        }
+        } else return null;
 
         BufferedImage faceImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         faceImage.getGraphics().fillRect(0, 0, width, height);
         faceImage.getGraphics().drawImage(image, 0, 0, width, height, xy, xy, xy + w, xy + h, null);
-        if (!(height == 32 && width == 64)) {
-            faceImage.getGraphics().drawImage(image, 0, 0, width, height, x, y, x + w, y + h, null);
-        }
+        faceImage.getGraphics().drawImage(image, 0, 0, width, height, x, y, x + w, y + h, null);
 
         return faceImage;
     }
@@ -102,7 +94,6 @@ public class SkinUtils {
                 image.setRGB(x, y, argb);
             }
         }
-
         return image;
     }
 

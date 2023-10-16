@@ -1,37 +1,14 @@
-# Presence-Man token
-# Environment variable named 'PRESENCE_MAN_TOKEN' overwrites this value.
+# Presence-Man configuration
 token: ~
-
-# Discord application id
-# Environment variable named 'PRESENCE_MAN_CLIENT_ID' overwrites this value.
 client_id: "1133823892486623344"
-
-# Environment variable named 'PRESENCE_MAN_SERVER' overwrites this value.
 server: "Development-Server"
-
-
-# When this isn't a lobby server, set this to false
-# This is to prevent get rate-limited.
 update_skin: true
 
 
-# Presence configuration:
-
-# Enable default activity
-# Environment variable named 'PRESENCE_MAN_DEFAULT_ENABLED' overwrites this value.
-enable_default: true
-
-# Network name
-# Environment variable named 'PRESENCE_MAN_DEFAULT_STATE' overwrites this value.
-default_state: "Playing {server} on {network}"
-
-# Server name
-# Environment variable named 'PRESENCE_MAN_DEFAULT_DETAILS' overwrites this value.
-default_details: ""
-
-# Server icon asset name
-# Environment variable named 'PRESENCE_MAN_DEFAULT_LARGE_IMAGE_KEY' overwrites this value.
-default_large_image_key: "presence-man"
-# Server name
-# Environment variable named 'PRESENCE_MAN_DEFAULT_LARGE_IMAGE_TEXT' overwrites this value.
-default_large_image_text: "{App.name} - v{App.version}"
+# Default presence configuration:
+default_presence:
+  enabled: true
+  state: "Playing {server} on {network}"
+  details: ""
+  large_image_key: "presence-man"
+  large_image_text: "{App.name} - v{App.version}"

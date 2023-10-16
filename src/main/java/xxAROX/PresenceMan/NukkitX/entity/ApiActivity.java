@@ -2,12 +2,14 @@ package xxAROX.PresenceMan.NukkitX.entity;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import xxAROX.PresenceMan.NukkitX.PresenceMan;
 
 import javax.annotation.Nullable;
-import java.io.InputStreamReader;
 
 @NoArgsConstructor
 @ToString
@@ -42,9 +44,10 @@ public class ApiActivity {
         this.large_icon_text = large_icon_text;
     }
 
-    public String serialize(){
+    public JsonObject serialize(){
         JsonObject json = new JsonObject();
-        json.addProperty("client_id", "HERE");
+        json.addProperty("client_id", PresenceMan.client_id);
+        json.addProperty("type", type.toString());
         json.addProperty("state", state);
         json.addProperty("details", details);
         json.addProperty("end", end);
@@ -52,12 +55,12 @@ public class ApiActivity {
         json.addProperty("large_icon_text", large_icon_text);
         json.addProperty("party_max_player_count", party_max_player_count);
         json.addProperty("party_player_count", party_player_count);
-        return json.toString();
+        return json;
     }
 
     public static ApiActivity deserialize(String input){
         JsonObject json = new Gson().fromJson(input, JsonObject.class);
-        String __type = (json.has("type") && !json.get("type").isJsonNull() ? json.get("type").getAsString() : ActivityType.UNUSED.toString()).toUpperCase();
+        String __type = (json.has("type") && !json.get("type").isJsonNull() ? json.get("type").getAsString() : ActivityType.PLAYING.toString()).toUpperCase();
         ActivityType type = ActivityType.valueOf(__type);
         String state = (json.has("state") && !json.get("state").isJsonNull() ? json.get("state").getAsString() : null);
         String details = (json.has("details") && !json.get("details").isJsonNull() ? json.get("details").getAsString() : null);
