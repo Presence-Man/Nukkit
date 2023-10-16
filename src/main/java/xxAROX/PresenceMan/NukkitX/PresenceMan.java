@@ -15,6 +15,7 @@ import xxAROX.PresenceMan.NukkitX.tasks.UpdateCheckerTask;
 import xxAROX.PresenceMan.NukkitX.tasks.async.BackendRequest;
 import xxAROX.PresenceMan.NukkitX.tasks.async.FetchGatewayInformationTask;
 import xxAROX.PresenceMan.NukkitX.utils.SkinUtils;
+import xxAROX.PresenceMan.NukkitX.utils.Utils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,37 +36,20 @@ public class PresenceMan extends PluginBase {
     @Override
     public void onLoad() {
         instance = this;
-        this.saveResource("config.yml");
+        saveResource("README.md");
+        saveResource("config.yml");
+
         Config config = this.getConfig();
+        token = (String) Utils.getconfigvalue(config, "token");
+        client_id = (String) Utils.getconfigvalue(config, "client_id", "", client_id);
+        server = (String) Utils.getconfigvalue(config, "server", "", server);
+        update_skin = (Boolean) Utils.getconfigvalue(config, "update_skin", "", update_skin);
 
-        token = System.getenv("PRESENCE_MAN_TOKEN") != null && !System.getenv("PRESENCE_MAN_TOKEN").isEmpty() ?
-                System.getenv("PRESENCE_MAN_TOKEN") : config.getString("token", token);
-
-        client_id = System.getenv("PRESENCE_MAN_CLIENT_ID") != null && !System.getenv("PRESENCE_MAN_CLIENT_ID").isEmpty() ?
-                System.getenv("PRESENCE_MAN_CLIENT_ID") : config.getString("client_id", client_id);
-
-        server = System.getenv("PRESENCE_MAN_SERVER") != null && !System.getenv("PRESENCE_MAN_SERVER").isEmpty() ?
-                System.getenv("PRESENCE_MAN_SERVER") : config.getString("server", server);
-
-        enable_default = System.getenv("PRESENCE_MAN_DEFAULT_ENABLED") != null && !System.getenv("PRESENCE_MAN_DEFAULT_ENABLED").isEmpty() ?
-                System.getenv("PRESENCE_MAN_DEFAULT_ENABLED").equalsIgnoreCase("true") :
-                config.getBoolean("enable_default", enable_default);
-
-        update_skin = System.getenv("PRESENCE_MAN_UPDATE_SKIN") != null && !System.getenv("PRESENCE_MAN_UPDATE_SKIN").isEmpty() ?
-                System.getenv("PRESENCE_MAN_UPDATE_SKIN").equalsIgnoreCase("true") :
-                config.getBoolean("enable_default", enable_default);
-
-        String DEFAULT_STATE = System.getenv("PRESENCE_MAN_DEFAULT_STATE") != null && !System.getenv("PRESENCE_MAN_DEFAULT_STATE").isEmpty() ?
-                System.getenv("PRESENCE_MAN_DEFAULT_STATE") : config.getString("default_state", null);
-
-        String DEFAULT_DETAILS = System.getenv("PRESENCE_MAN_DEFAULT_DETAILS") != null && !System.getenv("PRESENCE_MAN_DEFAULT_DETAILS").isEmpty() ?
-                System.getenv("PRESENCE_MAN_DEFAULT_DETAILS") : config.getString("default_details", null);
-
-        String DEFAULT_LARGE_IMAGE_KEY = System.getenv("PRESENCE_MAN_DEFAULT_LARGE_IMAGE_KEY") != null && !System.getenv("PRESENCE_MAN_DEFAULT_LARGE_IMAGE_KEY").isEmpty() ?
-                System.getenv("PRESENCE_MAN_DEFAULT_LARGE_IMAGE_KEY") : config.getString("default_large_image_key", "bedrock");
-
-        String DEFAULT_LARGE_IMAGE_TEXT = System.getenv("PRESENCE_MAN_DEFAULT_LARGE_IMAGE_TEXT") != null && !System.getenv("PRESENCE_MAN_DEFAULT_LARGE_IMAGE_TEXT").isEmpty() ?
-                System.getenv("PRESENCE_MAN_DEFAULT_LARGE_IMAGE_TEXT") : config.getString("default_large_image_text", "Minecraft: Bedrock Edition");
+        enable_default = (Boolean) Utils.getconfigvalue(config, "default_presence.enabled", "DEFAULT_ENABLED", enable_default);
+        String DEFAULT_STATE = (String) Utils.getconfigvalue(config, "default_presence.state", "DEFAULT_STATE", "Playing {server} on {network}");
+        String DEFAULT_DETAILS = (String) Utils.getconfigvalue(config, "default_presence.details", "DEFAULT_DETAILS", "");
+        String DEFAULT_LARGE_IMAGE_KEY = (String) Utils.getconfigvalue(config, "default_presence.large_image_key", "DEFAULT_LARGE_IMAGE_KEY", "");
+        String DEFAULT_LARGE_IMAGE_TEXT = (String) Utils.getconfigvalue(config, "default_presence.large_image_text", "DEFAULT_LARGE_IMAGE_TEXT", "{App.name} - v{App.version}");
 
         default_activity = new ApiActivity(
                 ActivityType.PLAYING,
