@@ -25,7 +25,6 @@ public class ApiRequest {
         this.uri = uri;
         this.body = body;
         this.postMethod = postMethod;
-        //PresenceMan.getInstance().applyToken(this); TODO
         this.header("Serversoftware", Server.getInstance().getName());
     }
 
