@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) Jan-Michael Sohn
+ * All rights reserved.
+ * Only people with the explicit permission from Jan Sohn are allowed to modify, share or distribute this code.
+ */
+
 package xxAROX.PresenceMan.NukkitX;
 
 import cn.nukkit.event.EventHandler;
