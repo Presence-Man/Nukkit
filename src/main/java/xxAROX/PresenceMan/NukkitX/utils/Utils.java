@@ -24,4 +24,29 @@ public final class Utils {
     public static Object getconfigvalue(Config config, String key){
         return getconfigvalue(config, key, "", null);
     }
+
+    public static class VersionComparison {
+        public static Version parse(String versionString) {
+            String[] parts = versionString.split("\\.");
+            int[] versionNumbers = new int[parts.length];
+            for (int i = 0; i < parts.length; i++) {
+                versionNumbers[i] = Integer.parseInt(parts[i]);
+            }
+            return new Version(versionNumbers);
+        }
+        public static class Version implements Comparable<Version> {
+            private final int[] versionNumbers;
+            public Version(int[] versionNumbers) {
+                this.versionNumbers = versionNumbers;
+            }
+            @Override
+            public int compareTo(Version other) {
+                for (int i = 0; i < Math.min(versionNumbers.length, other.versionNumbers.length); i++) {
+                    int result = Integer.compare(versionNumbers[i], other.versionNumbers[i]);
+                    if (result != 0) return result;
+                }
+                return Integer.compare(versionNumbers.length, other.versionNumbers.length);
+            }
+        }
+    }
 }

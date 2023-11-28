@@ -90,11 +90,11 @@ public final class PresenceMan extends PluginBase {
         if (player.getLoginChainData().getXUID().isEmpty()) return;
 
         JsonObject body = new JsonObject();
-        Map.of(
-                "ip", player.getAddress(),
-                "xuid", player.getLoginChainData().getXUID(),
-                "server", PresenceMan.server
-        ).forEach(body::addProperty);
+        new HashMap<String, String>(){{
+            put("ip", player.getAddress());
+            put("xuid", player.getLoginChainData().getXUID());
+            put("server", PresenceMan.server);
+        }}.forEach(body::addProperty);
         if (activity == null) body.addProperty("api_activity", (String)null);
         else body.add("api_activity", activity.serialize());
 
@@ -142,10 +142,10 @@ public final class PresenceMan extends PluginBase {
         if (!player.isConnected()) return;
         if (player.getLoginChainData().getXUID().isEmpty()) return;
         JsonObject body = new JsonObject();
-        Map.of(
-                "ip", player.getAddress(),
-                "xuid", player.getLoginChainData().getXUID()
-        ).forEach(body::addProperty);
+        new HashMap<String, String>(){{
+            put("ip", player.getAddress());
+            put("xuid", player.getLoginChainData().getXUID());
+        }}.forEach(body::addProperty);
 
         ApiRequest request = new ApiRequest(ApiRequest.URI_OFFLINE, body, true);
         request.header("Token", token);
@@ -167,11 +167,11 @@ public final class PresenceMan extends PluginBase {
 
         if (content != null) {
             JsonObject body = new JsonObject();
-            Map.of(
-                    "ip", player.getAddress(),
-                    "xuid", player.getLoginChainData().getXUID(),
-                    "skin", content
-            ).forEach(body::addProperty);
+            new HashMap<String, String>(){{
+                put("ip", player.getAddress());
+                put("xuid", player.getLoginChainData().getXUID());
+                put("skin", content);
+            }}.forEach(body::addProperty);
             ApiRequest request = new ApiRequest(ApiRequest.URI_UPDATE_SKIN, body, true);
             request.header("Token", token);
             runTask(new BackendRequest(request.serialize(), response -> {}, error -> {}, 10));

@@ -18,7 +18,7 @@ import java.util.Base64;
 
 public final class SkinUtils {
     public static @Nullable String convertSkinToBased64File(Skin skin) {
-        var image = fromSkinToImage(skin);
+        BufferedImage image = fromSkinToImage(skin);
         if (image == null) return null;
 
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
@@ -36,23 +36,27 @@ public final class SkinUtils {
         int width, height;
 
         switch (skinData.length) {
-            case 8192 -> {
+            case 8192: {
                 width = 64;
                 height = 32;
-            }
-            case 16384 -> {
+                break;
+           }
+            case 16384: {
                 width = 64;
                 height = 64;
+                break;
             }
-            case 32768 -> {
+            case 32768:  {
                 width = 128;
                 height = 64;
+                break;
             }
-            case 65536 -> {
+            case 65536:  {
                 width = 128;
                 height = 128;
+                break;
             }
-            default -> {
+            default:  {
                 return null;
             }
         }

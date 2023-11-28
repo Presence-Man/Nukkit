@@ -15,7 +15,7 @@ import java.util.Map;
 
 @Getter
 public final class ApiRequest {
-    private final Map<String, String> headers = new HashMap<>(){{
+    private final Map<String, String> headers = new HashMap<String, String>(){{
         put("Content-Type", "application/json");
     }};
     private JsonObject body;

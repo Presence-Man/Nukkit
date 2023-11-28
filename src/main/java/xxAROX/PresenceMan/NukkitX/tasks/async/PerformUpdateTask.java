@@ -14,10 +14,12 @@ import okhttp3.Response;
 import xxAROX.PresenceMan.NukkitX.PresenceMan;
 import xxAROX.PresenceMan.NukkitX.entity.Gateway;
 import xxAROX.PresenceMan.NukkitX.tasks.UpdateCheckerTask;
+import xxAROX.PresenceMan.NukkitX.utils.Utils;
 
 import java.io.IOException;
-import java.lang.module.ModuleDescriptor;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class PerformUpdateTask extends AsyncTask {
     private static final String LATEST_VERSION_URL = "https://github.com/Presence-Man/releases/raw/main/version-nukkit.txt";
@@ -46,8 +48,16 @@ public final class PerformUpdateTask extends AsyncTask {
             int responseCode = response.code();
             if (responseCode != 200 || responseBody == null || responseBody.isEmpty()) setResult(null);
             else {
-                ModuleDescriptor.Version latest = ModuleDescriptor.Version.parse(responseBody.trim());
-                setResult(latest.compareTo(ModuleDescriptor.Version.parse(currentVersion)) < 0 ? responseBody.trim() : null);
+                Pattern versionPattern = Pattern.compile("\\d+(\\.\\d+)*");
+                Matcher matcher = versionPattern.matcher(responseBody);
+
+                if (matcher.find()) {
+                    String latestVersionString = matcher.group();
+                    Utils.VersionComparison.Version latest = Utils.VersionComparison.parse(latestVersionString);
+                    Utils.VersionComparison.Version current = Utils.VersionComparison.parse(currentVersion);
+
+                    setResult(latest.compareTo(current) < 0 ? latestVersionString : null);
+                } else setResult(null);
             }
             response.close();
         } catch (IOException e) {
