@@ -1,6 +1,5 @@
 package xxAROX.PresenceMan.NukkitX.entity;
 
-import cn.nukkit.Server;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import lombok.Getter;
@@ -9,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Getter
-public class ApiRequest {
+public final class ApiRequest {
     private final Map<String, String> headers = new HashMap<>(){{
         put("Content-Type", "application/json");
     }};
@@ -18,14 +17,13 @@ public class ApiRequest {
     private String uri;
 
     public static final String URI_UPDATE_PRESENCE = "/api/v1/servers/update_presence";
-    public static final String URI_UPDATE_HEAD = "/api/v1/heads/update";
     public static final String URI_OFFLINE = "/api/v1/servers/offline";
+    public static final String URI_UPDATE_SKIN = "/api/v1/images/skins/update";
 
     public ApiRequest(String uri, JsonObject body, boolean postMethod) {
         this.uri = uri;
         this.body = body;
         this.postMethod = postMethod;
-        this.header("Serversoftware", Server.getInstance().getName());
     }
 
     public String serialize() {

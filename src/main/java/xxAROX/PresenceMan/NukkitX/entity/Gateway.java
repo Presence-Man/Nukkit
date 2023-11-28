@@ -1,6 +1,6 @@
 package xxAROX.PresenceMan.NukkitX.entity;
 
-public class Gateway {
+public final class Gateway {
     public static String protocol = "http://";
     public static String address = "127.0.0.1";
     public static Integer port = null;

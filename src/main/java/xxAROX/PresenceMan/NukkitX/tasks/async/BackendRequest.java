@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public class BackendRequest extends AsyncTask {
+public final class BackendRequest extends AsyncTask {
     private final String request;
     private final Consumer<JsonObject> onResponse;
     private final Consumer<JsonObject> onError;
@@ -83,6 +83,6 @@ public class BackendRequest extends AsyncTask {
                 PresenceMan.getInstance().getLogger().error("[API-ERROR] [" + request.getUri() + "]: " + body.toString());
                 if (onError != null) onError.accept(body);
             }
-        } else PresenceMan.getInstance().getLogger().error("[JUST-IN-CASE-ERROR] [" + request.getUri() + "]: got null, that's not good");
+        } else PresenceMan.getInstance().getLogger().error("[JUST-IN-CASE-ERROR] [" + request.getUri() + "]: got null, that's not good"); // TODO: remove this
     }
 }

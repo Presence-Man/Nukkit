@@ -3,6 +3,7 @@ package xxAROX.PresenceMan.NukkitX.tasks.async;
 import cn.nukkit.Server;
 import cn.nukkit.scheduler.AsyncTask;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
 import xxAROX.PresenceMan.NukkitX.PresenceMan;
@@ -13,7 +14,7 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public class FetchGatewayInformationTask extends AsyncTask {
+public final class FetchGatewayInformationTask extends AsyncTask {
     public static final String URL = "https://raw.githubusercontent.com/Presence-Man/releases/main/gateway.json";
 
     @Override
@@ -26,35 +27,28 @@ public class FetchGatewayInformationTask extends AsyncTask {
         ;
 
         client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) {
-                if (response.code() == 200) {
-                    try {
-                        String responseBody = Objects.requireNonNull(response.body()).string();
-                        JsonObject result = PresenceMan.GSON.fromJson(responseBody, JsonObject.class);
-                        if (result != null && !result.isEmpty()) {
-                            Integer port = result.has("port") && !result.get("port").isJsonNull() ? result.get("port").getAsInt() : null;
-                            Gateway.protocol = result.get("protocol").getAsString();
-                            Gateway.address = result.get("address").getAsString();
-                            Gateway.port = port;
+            @Override public void onResponse(@NotNull Call call, @NotNull Response response) {
+                try {
+                    if (response.code() != 200) PresenceMan.getInstance().getLogger().warning("Couldn't fetch gateway data");
+                    else {
+                        JsonObject json = null;
+                        try {json = PresenceMan.GSON.fromJson(Objects.requireNonNull(response.body()).string(), JsonObject.class);} catch (IOException ignore) {}
+                        if (json != null) {
+                            Gateway.protocol = json.get("protocol").getAsString();
+                            Gateway.address = json.get("address").getAsString();
+                            Gateway.port = json.has("port") && !json.get("port").isJsonNull() ? json.get("port").getAsInt() : null;
+                            ping_backend(success -> {
+                                if (!success) PresenceMan.getInstance().getLogger().error("Error while connecting to backend-server!");
+                            });
                         }
-
-                        ping_backend(success -> {
-                            if (!success) PresenceMan.getInstance().getLogger().error("Error while connecting to backend-server!");
-                        });
-                    } catch (Exception e) {
-                        PresenceMan.getInstance().getLogger().error("Error while parsing gateway information: " + e.getMessage());
                     }
-                } else {
-                    PresenceMan.getInstance().getLogger().critical("Presence-Man backend-gateway config is not reachable, disabling..");
-                    PresenceMan.getInstance().getServer().getPluginManager().disablePlugin(PresenceMan.getInstance());
+                } catch (JsonParseException e) {
+                    PresenceMan.getInstance().getLogger().error("Error while fetching gateway information: " + e.getMessage());
                 }
             }
-
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+            @Override public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 PresenceMan.getInstance().getLogger().critical("Presence-Man backend-gateway config is not reachable, disabling..");
-                PresenceMan.getInstance().getServer().getPluginManager().disablePlugin(PresenceMan.getInstance());
+                PresenceMan.getInstance().setEnabled(false);
             }
         });
     }

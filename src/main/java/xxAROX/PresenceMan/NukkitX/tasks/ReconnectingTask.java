@@ -5,7 +5,7 @@ import cn.nukkit.scheduler.TaskHandler;
 import xxAROX.PresenceMan.NukkitX.PresenceMan;
 import xxAROX.PresenceMan.NukkitX.tasks.async.FetchGatewayInformationTask;
 
-public class ReconnectingTask extends Task {
+public final class ReconnectingTask extends Task {
     public static boolean active = false;
     private static TaskHandler task = null;
 

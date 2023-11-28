@@ -6,16 +6,17 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import xxAROX.PresenceMan.NukkitX.PresenceMan;
+import xxAROX.PresenceMan.NukkitX.entity.Gateway;
 import xxAROX.PresenceMan.NukkitX.tasks.UpdateCheckerTask;
 
 import java.io.IOException;
 import java.lang.module.ModuleDescriptor;
 import java.util.Objects;
 
-public class PerformUpdateTask extends AsyncTask {
+public final class PerformUpdateTask extends AsyncTask {
     private static final String LATEST_VERSION_URL = "https://github.com/Presence-Man/releases/raw/main/version-nukkit.txt";
 
-    private String currentVersion;
+    private final String currentVersion;
     private boolean notified = false;
 
     public PerformUpdateTask() {
@@ -55,7 +56,7 @@ public class PerformUpdateTask extends AsyncTask {
         if (latest != null) {
             if (!notified) {
                 PresenceMan.getInstance().getLogger().warning("Your version of Presence-Man is out of date. To avoid issues please update it to the latest version!");
-                PresenceMan.getInstance().getLogger().warning("Download: https://presence-man.com/downloads/nukkit");
+                PresenceMan.getInstance().getLogger().warning("Download: " + Gateway.getUrl() + "/downloads/nukkit");
                 notified = true;
             }
         }

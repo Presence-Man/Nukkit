@@ -1,57 +1,28 @@
 package xxAROX.PresenceMan.NukkitX.utils;
 
-import cn.nukkit.Player;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.utils.BinaryStream;
 
+import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Base64;
 
-public class SkinUtils {
-
-    public static String getFrontFace(Player player, Skin skinData) {
-        BufferedImage faceImage = extractFrontFace(skinData);
-        if (faceImage == null) return null;
-        return encodeImageToBase64(faceImage);
-    }
-
-    private static BufferedImage extractFrontFace(Skin skin) {
-        BufferedImage image = fromSkinToImage(skin);
+public final class SkinUtils {
+    public static @Nullable String convertSkinToBased64File(Skin skin) {
+        var image = fromSkinToImage(skin);
         if (image == null) return null;
 
-        int width = image.getWidth();
-        int height = image.getHeight();
-
-        int xy, w, h, x, y;
-        if (width == 32 && height == 32) {
-            xy = 8;
-            w = 8;
-            h = 8;
-            x = 16;
-            y = 8;
-        } else if (width == 64 && height == 64) {
-            xy = 8;
-            w = 8;
-            h = 8;
-            x = 48;
-            y = 8;
-        } else if (width == 128 && height == 128) {
-            xy = 16;
-            w = 16;
-            h = 16;
-            x = 80;
-            y = 16;
-        } else return null;
-
-        BufferedImage faceImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        faceImage.getGraphics().fillRect(0, 0, width, height);
-        faceImage.getGraphics().drawImage(image, 0, 0, width, height, xy, xy, xy + w, xy + h, null);
-        faceImage.getGraphics().drawImage(image, 0, 0, width, height, x, y, x + w, y + h, null);
-
-        return faceImage;
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            ImageIO.write(image, "png", baos);
+            byte[] imageData = baos.toByteArray();
+            return Base64.getEncoder().encodeToString(imageData);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private static BufferedImage fromSkinToImage(Skin skin) {
@@ -95,16 +66,5 @@ public class SkinUtils {
             }
         }
         return image;
-    }
-
-    private static String encodeImageToBase64(BufferedImage image) {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            ImageIO.write(image, "png", baos);
-            byte[] imageData = baos.toByteArray();
-            return Base64.getEncoder().encodeToString(imageData);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 }

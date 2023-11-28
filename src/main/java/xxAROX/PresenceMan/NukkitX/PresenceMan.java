@@ -7,6 +7,7 @@ import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import lombok.NonNull;
 import xxAROX.PresenceMan.NukkitX.entity.ActivityType;
 import xxAROX.PresenceMan.NukkitX.entity.ApiActivity;
 import xxAROX.PresenceMan.NukkitX.entity.ApiRequest;
@@ -17,12 +18,16 @@ import xxAROX.PresenceMan.NukkitX.tasks.async.FetchGatewayInformationTask;
 import xxAROX.PresenceMan.NukkitX.utils.SkinUtils;
 import xxAROX.PresenceMan.NukkitX.utils.Utils;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PresenceMan extends PluginBase {
+public final class PresenceMan extends PluginBase {
     public static final Gson GSON = new Gson();
     private static PresenceMan instance;
+    public static PresenceMan getInstance() {
+        return instance;
+    }
 
     private static String token = "undefined";
     public static String client_id = null;
@@ -33,8 +38,7 @@ public class PresenceMan extends PluginBase {
     public static Map<String, ApiActivity> presences = new HashMap<>();
     public static ApiActivity default_activity;
 
-    @Override
-    public void onLoad() {
+    @Override public void onLoad() {
         instance = this;
         saveResource("README.md");
         saveResource("config.yml");
@@ -60,21 +64,23 @@ public class PresenceMan extends PluginBase {
                 DEFAULT_LARGE_IMAGE_TEXT
         );
     }
-
-    @Override
-    public void onEnable() {
+    @Override public void onEnable() {
         Server.getInstance().getPluginManager().registerEvents(new EventListener(), this);
         Server.getInstance().getScheduler().scheduleRepeatingTask(this, new UpdateCheckerTask(), 20 *60 *60); // NOTE: 60 minutes
         Server.getInstance().getScheduler().scheduleAsyncTask(this, new FetchGatewayInformationTask());
     }
-
-    @Override
-    public void onDisable() {
+    @Override public void onDisable() {
         for (Player player : Server.getInstance().getOnlinePlayers().values()) offline(player);
     }
 
-    public static void setActivity(Player player, ApiActivity activity) {
+    private static void runTask(BackendRequest task){
+        if (!Server.getInstance().isRunning()) task.run();
+        else Server.getInstance().getScheduler().scheduleAsyncTask(PresenceMan.getInstance(), task);
+    }
+
+    public static void setActivity(@NonNull Player player, @Nullable ApiActivity activity) {
         if (!Server.getInstance().isRunning()) return;
+        if (!player.isConnected()) return;
         if (player.getLoginChainData().getXUID().isEmpty()) return;
 
         JsonObject body = new JsonObject();
@@ -83,16 +89,13 @@ public class PresenceMan extends PluginBase {
                 "xuid", player.getLoginChainData().getXUID(),
                 "server", PresenceMan.server
         ).forEach(body::addProperty);
-        body.add("api_activity", activity.serialize());
+        if (activity == null) body.addProperty("api_activity", (String)null);
+        else body.add("api_activity", activity.serialize());
 
-        ApiRequest request = new ApiRequest(
-                ApiRequest.URI_UPDATE_PRESENCE,
-                body,
-                true
-        );
+        ApiRequest request = new ApiRequest(ApiRequest.URI_UPDATE_PRESENCE, body, true);
         request.header("Token", token);
 
-        PresenceMan.getInstance().getServer().getScheduler().scheduleAsyncTask(PresenceMan.getInstance(), new BackendRequest(
+        PresenceMan.runTask(new BackendRequest(
                 request.serialize(),
                 response -> {
                     if (response.has("status") && response.get("status").getAsInt() == 200) PresenceMan.presences.put(player.getLoginChainData().getXUID(), activity);
@@ -103,11 +106,35 @@ public class PresenceMan extends PluginBase {
         ));
     }
 
+    public static String getHeadUrl(String xuid, boolean gray, Integer size) {
+        size = size != null ? Math.min(512, Math.max(16, size)) : null;
+        String url = "/api/v1/images/heads/" + xuid;
+        if (size != null) url += "?size=" + size;
+        if (gray) url += size != null ? "&gray" : "?gray";
+        return Gateway.getUrl() + url;
+    }
+    public static String getHeadUrl(String xuid, boolean gray){
+        return getHeadUrl(xuid, gray, null);
+    }
     public static String getHeadUrl(String xuid){
-        return Gateway.getUrl() + "/api/v1/heads/" + xuid;
+        return getHeadUrl(xuid, false, null);
     }
 
+    public static String getSkinUrl(String xuid){
+        return Gateway.getUrl() + "/api/v1/images/skins/" + xuid;
+    }
+
+
+
+
+
+    /**
+     * @hidden
+     */
     public static void offline(Player player) {
+        if (!Server.getInstance().isRunning()) return;
+        if (!player.isConnected()) return;
+        if (player.getLoginChainData().getXUID().isEmpty()) return;
         JsonObject body = new JsonObject();
         Map.of(
                 "ip", player.getAddress(),
@@ -116,41 +143,32 @@ public class PresenceMan extends PluginBase {
 
         ApiRequest request = new ApiRequest(ApiRequest.URI_OFFLINE, body, true);
         request.header("Token", token);
-
-        BackendRequest task = new BackendRequest(
+        runTask(new BackendRequest(
                 request.serialize(),
                 response -> PresenceMan.presences.remove(player.getLoginChainData().getXUID()),
                 error -> {},
                 10
-        );
-        if (!Server.getInstance().isRunning()) task.run();
-        else Server.getInstance().getScheduler().scheduleAsyncTask(PresenceMan.getInstance(), task);
+        ));
     }
-
-    public static void save_head(Player player, Skin skin) {
+    /**
+     * @hidden
+     */
+    public static void save_skin(Player player, Skin skin) {
         if (!Server.getInstance().isRunning()) return;
         if (!player.isConnected()) return;
         if (player.getLoginChainData().getXUID().isEmpty()) return;
+        String content = SkinUtils.convertSkinToBased64File(skin);
 
-        String head = SkinUtils.getFrontFace(player, skin);
-
-        if (head != null) {
+        if (content != null) {
             JsonObject body = new JsonObject();
             Map.of(
                     "ip", player.getAddress(),
                     "xuid", player.getLoginChainData().getXUID(),
-                    "head", head
+                    "skin", content
             ).forEach(body::addProperty);
-            ApiRequest request = new ApiRequest(ApiRequest.URI_UPDATE_HEAD, body, true);
+            ApiRequest request = new ApiRequest(ApiRequest.URI_UPDATE_SKIN, body, true);
             request.header("Token", token);
-
-            BackendRequest task = new BackendRequest(request.serialize(), response -> {}, error -> {}, 10);
-            if (!Server.getInstance().isRunning()) task.run();
-            else Server.getInstance().getScheduler().scheduleAsyncTask(PresenceMan.getInstance(), task);
+            runTask(new BackendRequest(request.serialize(), response -> {}, error -> {}, 10));
         }
-    }
-
-    public static PresenceMan getInstance() {
-        return instance;
     }
 }
