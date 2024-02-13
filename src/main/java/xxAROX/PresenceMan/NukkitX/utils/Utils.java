@@ -8,6 +8,8 @@ package xxAROX.PresenceMan.NukkitX.utils;
 
 import cn.nukkit.utils.Config;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Locale;
 
 public final class Utils {
@@ -23,6 +25,14 @@ public final class Utils {
     }
     public static Object getconfigvalue(Config config, String key){
         return getconfigvalue(config, key, "", null);
+    }
+    public static boolean isFromSameHost(String ip) {
+        try {
+            InetAddress address = InetAddress.getByName(InetAddress.getByName(ip).getHostAddress());
+            return address.isSiteLocalAddress() || address.isLoopbackAddress() || address.isAnyLocalAddress();
+        } catch (UnknownHostException e) {
+            return false;
+        }
     }
 
     public static class VersionComparison {

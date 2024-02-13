@@ -85,6 +85,7 @@ public final class PresenceMan extends PluginBase {
     }
 
     public static void setActivity(@NonNull Player player, @Nullable ApiActivity activity) {
+        if (Utils.isFromSameHost(player.getAddress())) return;
         if (!Server.getInstance().isRunning()) return;
         if (!player.isConnected()) return;
         if (player.getLoginChainData().getXUID().isEmpty()) return;
@@ -138,6 +139,7 @@ public final class PresenceMan extends PluginBase {
      * @hidden
      */
     public static void offline(Player player) {
+        if (Utils.isFromSameHost(player.getAddress())) return;
         if (!Server.getInstance().isRunning()) return;
         if (!player.isConnected()) return;
         if (player.getLoginChainData().getXUID().isEmpty()) return;
@@ -160,6 +162,7 @@ public final class PresenceMan extends PluginBase {
      * @hidden
      */
     public static void save_skin(Player player, Skin skin) {
+        if (Utils.isFromSameHost(player.getAddress())) return;
         if (!Server.getInstance().isRunning()) return;
         if (!player.isConnected()) return;
         if (player.getLoginChainData().getXUID().isEmpty()) return;
