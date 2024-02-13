@@ -23,8 +23,10 @@ public final class ApiRequest {
     private String uri;
 
     public static final String URI_UPDATE_PRESENCE = "/api/v1/servers/update_presence";
-    public static final String URI_OFFLINE = "/api/v1/servers/offline";
+    public static final String URI_UPDATE_OFFLINE = "/api/v1/servers/offline";
     public static final String URI_UPDATE_SKIN = "/api/v1/images/skins/update";
+    public static final String URI_GET_SKIN = "/api/v1/images/skins/";
+    public static final String URI_GET_HEAD = "/api/v1/images/heads/";
 
     public ApiRequest(String uri, JsonObject body, boolean postMethod) {
         this.uri = uri;

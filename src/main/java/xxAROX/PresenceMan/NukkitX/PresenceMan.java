@@ -113,22 +113,25 @@ public final class PresenceMan extends PluginBase {
         ));
     }
 
-    public static String getHeadUrl(String xuid, boolean gray, Integer size) {
+    public static String getHeadURL(String xuid, boolean gray, Integer size) {
         size = size != null ? Math.min(512, Math.max(16, size)) : null;
-        String url = "/api/v1/images/heads/" + xuid;
+        String url = ApiRequest.URI_GET_HEAD + xuid;
         if (size != null) url += "?size=" + size;
         if (gray) url += size != null ? "&gray" : "?gray";
         return Gateway.getUrl() + url;
     }
-    public static String getHeadUrl(String xuid, boolean gray){
-        return getHeadUrl(xuid, gray, null);
+    public static String getHeadURL(String xuid, boolean gray){
+        return getHeadURL(xuid, gray, null);
     }
-    public static String getHeadUrl(String xuid){
-        return getHeadUrl(xuid, false, null);
+    public static String getHeadURL(String xuid, Integer size){
+        return getHeadURL(xuid, false, size);
+    }
+    public static String getHeadURL(String xuid){
+        return getHeadURL(xuid, false, null);
     }
 
-    public static String getSkinUrl(String xuid){
-        return Gateway.getUrl() + "/api/v1/images/skins/" + xuid;
+    public static String getSkinURL(String xuid){
+        return Gateway.getUrl() + ApiRequest.URI_GET_SKIN + xuid;
     }
 
 
@@ -139,7 +142,6 @@ public final class PresenceMan extends PluginBase {
      * @hidden
      */
     public static void offline(Player player) {
-        if (Utils.isFromSameHost(player.getAddress())) return;
         if (!Server.getInstance().isRunning()) return;
         if (!player.isConnected()) return;
         if (player.getLoginChainData().getXUID().isEmpty()) return;
@@ -149,7 +151,7 @@ public final class PresenceMan extends PluginBase {
             put("xuid", player.getLoginChainData().getXUID());
         }}.forEach(body::addProperty);
 
-        ApiRequest request = new ApiRequest(ApiRequest.URI_OFFLINE, body, true);
+        ApiRequest request = new ApiRequest(ApiRequest.URI_UPDATE_OFFLINE, body, true);
         request.header("Token", token);
         runTask(new BackendRequest(
                 request.serialize(),
@@ -162,7 +164,6 @@ public final class PresenceMan extends PluginBase {
      * @hidden
      */
     public static void save_skin(Player player, Skin skin) {
-        if (Utils.isFromSameHost(player.getAddress())) return;
         if (!Server.getInstance().isRunning()) return;
         if (!player.isConnected()) return;
         if (player.getLoginChainData().getXUID().isEmpty()) return;
