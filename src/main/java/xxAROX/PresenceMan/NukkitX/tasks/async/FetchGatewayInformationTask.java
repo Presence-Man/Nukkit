@@ -21,7 +21,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 public final class FetchGatewayInformationTask extends AsyncTask {
-    public static final String URL = "https://raw.githubusercontent.com/Presence-Man/releases/main/gateway.json";
+    public static final String URL = "https://raw.githubusercontent.com/Presence-Man/Gateway/main/gateway.json";
 
     @Override
     public void onRun() {
