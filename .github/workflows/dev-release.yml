@@ -49,3 +49,13 @@ jobs:
           prerelease: true
           title: "Development release v${{ steps.metadata.outputs.VERSION }}"
           files: "target/Presence-Man-Nukkit.jar"
+
+      - name: "Create latest_version-dev.txt"
+        run: "echo \"${{ steps.metadata.outputs.VERSION }}\" > latest_version-dev.txt"
+
+      - name: "Update version-dev.txt"
+        uses: "test-room-7/action-update-file@v1"
+        with:
+          file-path: latest_version.txt
+          commit-msg: "Updated development version to ${{ steps.metadata.outputs.VERSION }} - ci ignore"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
