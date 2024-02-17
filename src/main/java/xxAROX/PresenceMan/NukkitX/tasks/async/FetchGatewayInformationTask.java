@@ -69,25 +69,29 @@ public final class FetchGatewayInformationTask extends AsyncTask {
                     OkHttpClient client = new OkHttpClient();
                     Request request = new Request.Builder().url(Gateway.getUrl()).build();
                     Response response = client.newCall(request).execute();
-                    setResult(response.isSuccessful());
+                    setResult(response.code());
                     response.close();
                 } catch (IOException e) {
-                    setResult(false);
+                    setResult(404);
                 }
             }
 
             @Override
             public void onCompletion(Server server) {
-                boolean success = (boolean) getResult();
-                if (!success) {
+                int code = (int) getResult();
+                if (code != 200) {
                     Gateway.broken = true;
                     ReconnectingTask.activate();
                 } else {
                     ReconnectingTask.deactivate();
                     PresenceMan.getInstance().getLogger().notice("This server will be displayed as '" + PresenceMan.server + "' in presences!");
                 }
-                callback.accept(success);
+                callback.accept(code == 200);
             }
         });
+    }
+
+    public static void unga_bunga() {
+        Server.getInstance().getScheduler().scheduleAsyncTask(PresenceMan.getInstance(), new FetchGatewayInformationTask());
     }
 }

@@ -35,6 +35,9 @@ public final class PresenceMan extends PluginBase {
         return instance;
     }
 
+    private static final int HEAD_SIZE_MAX = 512;
+    private static final int HEAD_SIZE_MIN = 16;
+
     private static String token = "undefined";
     public static String client_id = null;
     public static String server = "undefined";
@@ -73,7 +76,7 @@ public final class PresenceMan extends PluginBase {
     @Override public void onEnable() {
         Server.getInstance().getPluginManager().registerEvents(new EventListener(), this);
         Server.getInstance().getScheduler().scheduleRepeatingTask(this, new UpdateCheckerTask(), 20 *60 *60); // NOTE: 60 minutes
-        Server.getInstance().getScheduler().scheduleAsyncTask(this, new FetchGatewayInformationTask());
+        FetchGatewayInformationTask.unga_bunga();
     }
     @Override public void onDisable() {
         for (Player player : Server.getInstance().getOnlinePlayers().values()) offline(player);
@@ -82,6 +85,27 @@ public final class PresenceMan extends PluginBase {
     private static void runTask(BackendRequest task){
         if (!Server.getInstance().isRunning()) task.run();
         else Server.getInstance().getScheduler().scheduleAsyncTask(PresenceMan.getInstance(), task);
+    }
+
+    public static String getHeadURL(String xuid, boolean gray, Integer size) {
+        size = size != null ? Math.min(512, Math.max(16, size)) : null;
+        String url = ApiRequest.URI_GET_HEAD + xuid;
+        if (size != null) url += "?size=" + size;
+        if (gray) url += size != null ? "&gray" : "?gray";
+        return Gateway.getUrl() + url;
+    }
+    public static String getHeadURL(String xuid, boolean gray){
+        return getHeadURL(xuid, gray, null);
+    }
+    public static String getHeadURL(String xuid, Integer size){
+        return getHeadURL(xuid, false, size);
+    }
+    public static String getHeadURL(String xuid){
+        return getHeadURL(xuid, false, null);
+    }
+
+    public static String getSkinURL(String xuid){
+        return Gateway.getUrl() + ApiRequest.URI_GET_SKIN + xuid;
     }
 
     public static void setActivity(@NonNull Player player, @Nullable ApiActivity activity) {
@@ -111,27 +135,6 @@ public final class PresenceMan extends PluginBase {
                 error -> {},
                 10
         ));
-    }
-
-    public static String getHeadURL(String xuid, boolean gray, Integer size) {
-        size = size != null ? Math.min(512, Math.max(16, size)) : null;
-        String url = ApiRequest.URI_GET_HEAD + xuid;
-        if (size != null) url += "?size=" + size;
-        if (gray) url += size != null ? "&gray" : "?gray";
-        return Gateway.getUrl() + url;
-    }
-    public static String getHeadURL(String xuid, boolean gray){
-        return getHeadURL(xuid, gray, null);
-    }
-    public static String getHeadURL(String xuid, Integer size){
-        return getHeadURL(xuid, false, size);
-    }
-    public static String getHeadURL(String xuid){
-        return getHeadURL(xuid, false, null);
-    }
-
-    public static String getSkinURL(String xuid){
-        return Gateway.getUrl() + ApiRequest.URI_GET_SKIN + xuid;
     }
 
 

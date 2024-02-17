@@ -12,8 +12,8 @@ public final class Gateway {
     public static Integer port = null;
     public static boolean broken = false;
 
-    public static String getUrl() {
-        if (broken) throw new Error("Presence-Man Backend server is not reachable");
+    public static String getUrl() throws RuntimeException{
+        if (broken) throw new RuntimeException("Presence-Man Backend server is not reachable");
         return protocol + address + (port != null ? ":" + port : "");
     }
 }

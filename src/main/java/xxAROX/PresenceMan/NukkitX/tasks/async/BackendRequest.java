@@ -15,6 +15,7 @@ import xxAROX.PresenceMan.NukkitX.entity.ApiRequest;
 import xxAROX.PresenceMan.NukkitX.entity.Gateway;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -26,7 +27,7 @@ public final class BackendRequest extends AsyncTask {
     private final int timeout;
     private final String url;
 
-    public BackendRequest(String request, Consumer<JsonObject> onResponse, Consumer<JsonObject> onError, int timeout) {
+    public BackendRequest(String request, Consumer<JsonObject> onResponse, Consumer<JsonObject> onError, int timeout) throws RuntimeException{
         this.url = Gateway.getUrl();
         this.request = request;
         this.onResponse = onResponse;
@@ -38,6 +39,16 @@ public final class BackendRequest extends AsyncTask {
     public void onRun() {
         ApiRequest apiRequest = ApiRequest.deserialize(request);
         Map<String, String> headers = apiRequest.getHeaders();
+
+        try {
+            if (!InetAddress.getByName("google.com").isReachable(5000)) {
+                setResult(null);
+                return;
+            }
+        } catch (IOException e) {
+            setResult(null);
+            return;
+        }
 
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(timeout, java.util.concurrent.TimeUnit.SECONDS)
@@ -86,9 +97,9 @@ public final class BackendRequest extends AsyncTask {
                 PresenceMan.getInstance().getLogger().error("[CLIENT-ERROR] [" + request.getUri() + "]: " + body.toString());
                 if (onError != null) onError.accept(body);
             } else if (code >= 500 && code <= 599) { // Server-Errors
-                PresenceMan.getInstance().getLogger().error("[API-ERROR] [" + request.getUri() + "]: " + body.toString());
+                if (!body.toString().contains("<html>")) PresenceMan.getInstance().getLogger().error("[API-ERROR] [" + request.getUri() + "]: " + body.toString());
                 if (onError != null) onError.accept(body);
             }
-        } else PresenceMan.getInstance().getLogger().error("[JUST-IN-CASE-ERROR] [" + request.getUri() + "]: got null, that's not good"); // TODO: remove this
+        }
     }
 }

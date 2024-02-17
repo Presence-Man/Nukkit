@@ -21,6 +21,7 @@ jobs:
       - name: "Get version"
         id: metadata
         run: |
+          echo "NEW_VERSION=$(php -r 'echo (version_compare(yaml_parse_file(getcwd() . "/src/main/resources/plugin.yml")["version"], file_get_contents(__DIR__ + "/version-nukkit.txt"), ">") ? "y" : "n");')" >> $GITHUB_OUTPUT
           echo "VERSION=$(php -r 'echo explode("+", explode("-", yaml_parse_file(getcwd() . "/src/main/resources/plugin.yml")["version"])[0])[0];')" >> $GITHUB_OUTPUT
           echo "FULL_VERSION=$(php -r 'echo yaml_parse_file(getcwd() . "/src/main/resources/plugin.yml")["version"];')" >> $GITHUB_OUTPUT
           echo "NAME=$(php -r 'echo yaml_parse_file(getcwd() . "/src/main/resources/plugin.yml")["name"];')" >> $GITHUB_OUTPUT
@@ -52,8 +53,19 @@ jobs:
           title: "Release v${{ steps.metadata.outputs.VERSION }}"
           files: "target/**.jar"
 
-      #- name: "Create version-nukkit.txt"
-      #  run: "echo \"${{ steps.metadata.outputs.VERSION }}\" >> version-nukkit.txt"
+      - name: "Create version-nukkit.txt"
+        if: "${{ steps.metadata.outputs.NEW_VERSION }} === 'y'"
+        run: "echo \"${{ steps.metadata.outputs.VERSION }}\" > version-nukkit.txt"
+
+      - name: "Update version.txt"
+        uses: "test-room-7/action-update-file@v1"
+        if: "${{ steps.metadata.outputs.NEW_VERSION }} === 'y'"
+        with:
+          file-path: version-nukkit.txt
+          commit-msg: Updated version - ci ignore
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          committer-name: "xxAROX"
+          committer-email: "arox.email.0@gmail.com"
 
       #- name: "Pushes latest version-nukkit.txt file"
       #  uses: dmnemec/copy_file_to_another_repo_action@main

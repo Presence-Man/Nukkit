@@ -6,6 +6,7 @@
 
 package xxAROX.PresenceMan.NukkitX.entity;
 
+import cn.nukkit.Server;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import lombok.Getter;
@@ -23,8 +24,8 @@ public final class ApiRequest {
     private String uri;
 
     public static final String URI_UPDATE_PRESENCE = "/api/v1/servers/update_presence";
-    public static final String URI_UPDATE_OFFLINE = "/api/v1/servers/offline";
     public static final String URI_UPDATE_SKIN = "/api/v1/images/skins/update";
+    public static final String URI_UPDATE_OFFLINE = "/api/v1/servers/offline";
     public static final String URI_GET_SKIN = "/api/v1/images/skins/";
     public static final String URI_GET_HEAD = "/api/v1/images/heads/";
 
@@ -32,6 +33,7 @@ public final class ApiRequest {
         this.uri = uri;
         this.body = body;
         this.postMethod = postMethod;
+        header("Serversoftware", Server.getInstance().getName());
     }
 
     public String serialize() {

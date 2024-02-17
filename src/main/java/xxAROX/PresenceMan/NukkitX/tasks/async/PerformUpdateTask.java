@@ -22,7 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class PerformUpdateTask extends AsyncTask {
-    private static final String LATEST_VERSION_URL = "https://github.com/Presence-Man/releases/raw/main/version-nukkit.txt";
+    private static final String LATEST_VERSION_URL = "https://github.com/Presence-Man/Nukkit/raw/main/version-nukkit.txt";
 
     private final String currentVersion;
     private boolean notified = false;
