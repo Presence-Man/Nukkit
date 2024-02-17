@@ -1,2 +1,2 @@
 # Nukkit
-Nukkit client plugin for @Presence-Man by @xxFLORII & @xxAROX.
+Nukkit client plugin for @Presence-Man
