@@ -4,7 +4,7 @@
  * Only people with the explicit permission from Jan Sohn are allowed to modify, share or distribute this code.
  */
 
-package xxAROX.PresenceMan.NukkitX.entity;
+package xxAROX.PresenceMan.Nukkit.entity;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import xxAROX.PresenceMan.NukkitX.PresenceMan;
+import xxAROX.PresenceMan.Nukkit.PresenceMan;
 
 import javax.annotation.Nullable;
 

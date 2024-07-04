@@ -4,17 +4,17 @@
  * Only people with the explicit permission from Jan Sohn are allowed to modify, share or distribute this code.
  */
 
-package xxAROX.PresenceMan.NukkitX.tasks.async;
+package xxAROX.PresenceMan.Nukkit.tasks.async;
 
 import cn.nukkit.Server;
 import cn.nukkit.scheduler.AsyncTask;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import xxAROX.PresenceMan.NukkitX.PresenceMan;
-import xxAROX.PresenceMan.NukkitX.entity.Gateway;
-import xxAROX.PresenceMan.NukkitX.tasks.UpdateCheckerTask;
-import xxAROX.PresenceMan.NukkitX.utils.Utils;
+import xxAROX.PresenceMan.Nukkit.PresenceMan;
+import xxAROX.PresenceMan.Nukkit.entity.Gateway;
+import xxAROX.PresenceMan.Nukkit.tasks.UpdateCheckerTask;
+import xxAROX.PresenceMan.Nukkit.utils.Utils;
 
 import java.io.IOException;
 import java.util.Objects;

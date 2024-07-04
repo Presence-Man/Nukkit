@@ -4,7 +4,7 @@
  * Only people with the explicit permission from Jan Sohn are allowed to modify, share or distribute this code.
  */
 
-package xxAROX.PresenceMan.NukkitX;
+package xxAROX.PresenceMan.Nukkit;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -14,15 +14,15 @@ import cn.nukkit.utils.Config;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import lombok.NonNull;
-import xxAROX.PresenceMan.NukkitX.entity.ActivityType;
-import xxAROX.PresenceMan.NukkitX.entity.ApiActivity;
-import xxAROX.PresenceMan.NukkitX.entity.ApiRequest;
-import xxAROX.PresenceMan.NukkitX.entity.Gateway;
-import xxAROX.PresenceMan.NukkitX.tasks.UpdateCheckerTask;
-import xxAROX.PresenceMan.NukkitX.tasks.async.BackendRequest;
-import xxAROX.PresenceMan.NukkitX.tasks.async.FetchGatewayInformationTask;
-import xxAROX.PresenceMan.NukkitX.utils.SkinUtils;
-import xxAROX.PresenceMan.NukkitX.utils.Utils;
+import xxAROX.PresenceMan.Nukkit.entity.ActivityType;
+import xxAROX.PresenceMan.Nukkit.entity.ApiActivity;
+import xxAROX.PresenceMan.Nukkit.entity.ApiRequest;
+import xxAROX.PresenceMan.Nukkit.entity.Gateway;
+import xxAROX.PresenceMan.Nukkit.tasks.UpdateCheckerTask;
+import xxAROX.PresenceMan.Nukkit.tasks.async.BackendRequest;
+import xxAROX.PresenceMan.Nukkit.tasks.async.FetchGatewayInformationTask;
+import xxAROX.PresenceMan.Nukkit.utils.SkinUtils;
+import xxAROX.PresenceMan.Nukkit.utils.Utils;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;

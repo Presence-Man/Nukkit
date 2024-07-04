@@ -4,7 +4,7 @@
  * Only people with the explicit permission from Jan Sohn are allowed to modify, share or distribute this code.
  */
 
-package xxAROX.PresenceMan.NukkitX.tasks.async;
+package xxAROX.PresenceMan.Nukkit.tasks.async;
 
 import cn.nukkit.Server;
 import cn.nukkit.scheduler.AsyncTask;
@@ -12,9 +12,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
-import xxAROX.PresenceMan.NukkitX.PresenceMan;
-import xxAROX.PresenceMan.NukkitX.entity.Gateway;
-import xxAROX.PresenceMan.NukkitX.tasks.ReconnectingTask;
+import xxAROX.PresenceMan.Nukkit.PresenceMan;
+import xxAROX.PresenceMan.Nukkit.entity.Gateway;
+import xxAROX.PresenceMan.Nukkit.tasks.ReconnectingTask;
 
 import java.io.IOException;
 import java.util.Objects;

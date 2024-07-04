@@ -4,7 +4,7 @@
  * Only people with the explicit permission from Jan Sohn are allowed to modify, share or distribute this code.
  */
 
-package xxAROX.PresenceMan.NukkitX.utils;
+package xxAROX.PresenceMan.Nukkit.utils;
 
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.utils.BinaryStream;

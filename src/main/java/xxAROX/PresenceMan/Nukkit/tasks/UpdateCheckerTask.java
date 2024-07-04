@@ -4,12 +4,12 @@
  * Only people with the explicit permission from Jan Sohn are allowed to modify, share or distribute this code.
  */
 
-package xxAROX.PresenceMan.NukkitX.tasks;
+package xxAROX.PresenceMan.Nukkit.tasks;
 
 import cn.nukkit.Server;
 import cn.nukkit.scheduler.Task;
-import xxAROX.PresenceMan.NukkitX.PresenceMan;
-import xxAROX.PresenceMan.NukkitX.tasks.async.PerformUpdateTask;
+import xxAROX.PresenceMan.Nukkit.PresenceMan;
+import xxAROX.PresenceMan.Nukkit.tasks.async.PerformUpdateTask;
 
 public final class UpdateCheckerTask extends Task {
     public static boolean running = false;

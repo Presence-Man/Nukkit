@@ -4,7 +4,7 @@
  * Only people with the explicit permission from Jan Sohn are allowed to modify, share or distribute this code.
  */
 
-package xxAROX.PresenceMan.NukkitX;
+package xxAROX.PresenceMan.Nukkit;
 
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
@@ -12,7 +12,7 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerChangeSkinEvent;
 import cn.nukkit.event.player.PlayerLoginEvent;
 import cn.nukkit.event.player.PlayerQuitEvent;
-import xxAROX.PresenceMan.NukkitX.utils.Utils;
+import xxAROX.PresenceMan.Nukkit.utils.Utils;
 
 public final class EventListener implements Listener {
 

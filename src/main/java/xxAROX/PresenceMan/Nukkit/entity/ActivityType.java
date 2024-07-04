@@ -4,7 +4,7 @@
  * Only people with the explicit permission from Jan Sohn are allowed to modify, share or distribute this code.
  */
 
-package xxAROX.PresenceMan.NukkitX.entity;
+package xxAROX.PresenceMan.Nukkit.entity;
 
 import lombok.AllArgsConstructor;
 

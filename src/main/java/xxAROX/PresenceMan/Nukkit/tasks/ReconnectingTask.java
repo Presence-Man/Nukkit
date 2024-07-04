@@ -4,12 +4,12 @@
  * Only people with the explicit permission from Jan Sohn are allowed to modify, share or distribute this code.
  */
 
-package xxAROX.PresenceMan.NukkitX.tasks;
+package xxAROX.PresenceMan.Nukkit.tasks;
 
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.scheduler.TaskHandler;
-import xxAROX.PresenceMan.NukkitX.PresenceMan;
-import xxAROX.PresenceMan.NukkitX.tasks.async.FetchGatewayInformationTask;
+import xxAROX.PresenceMan.Nukkit.PresenceMan;
+import xxAROX.PresenceMan.Nukkit.tasks.async.FetchGatewayInformationTask;
 
 public final class ReconnectingTask extends Task {
     public static boolean active = false;
