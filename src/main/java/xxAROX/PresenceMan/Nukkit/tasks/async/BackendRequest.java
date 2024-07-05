@@ -15,7 +15,6 @@ import xxAROX.PresenceMan.Nukkit.entity.ApiRequest;
 import xxAROX.PresenceMan.Nukkit.entity.Gateway;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -40,16 +39,6 @@ public final class BackendRequest extends AsyncTask {
         ApiRequest apiRequest = ApiRequest.deserialize(request);
         Map<String, String> headers = apiRequest.getHeaders();
 
-        try {
-            if (!InetAddress.getByName("google.com").isReachable(5000)) {
-                setResult(null);
-                return;
-            }
-        } catch (IOException e) {
-            setResult(null);
-            return;
-        }
-
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(timeout, java.util.concurrent.TimeUnit.SECONDS)
                 .readTimeout(timeout, java.util.concurrent.TimeUnit.SECONDS)
@@ -58,13 +47,13 @@ public final class BackendRequest extends AsyncTask {
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody requestBody = null;
 
-        if (apiRequest.isPostMethod()) requestBody = RequestBody.create(PresenceMan.GSON.toJson(apiRequest.getBody()), mediaType);
+        if (apiRequest.isPostMethod()) requestBody = RequestBody.create(apiRequest.getBody().toString(), mediaType);
 
         Request.Builder requestBuilder = new Request.Builder()
                 .url(url + apiRequest.getUri())
                 .method(apiRequest.isPostMethod() ? "POST" : "GET", requestBody);
 
-        for (Map.Entry<String, String> entry : headers.entrySet()) requestBuilder.header(entry.getKey(), entry.getValue());
+        headers.forEach(requestBuilder::header);
 
         try {
             Response response = client.newCall(requestBuilder.build()).execute();
@@ -89,7 +78,7 @@ public final class BackendRequest extends AsyncTask {
 
         if (results != null) {
             int code = results.get("status").getAsInt();
-            JsonObject body = results.get("body").getAsJsonObject();
+            JsonObject body = PresenceMan.GSON.fromJson(results.get("body").getAsString(), JsonObject.class);
 
             if (code >= 100 && code <= 399) { // Good
                 if (onResponse != null) onResponse.accept(body);

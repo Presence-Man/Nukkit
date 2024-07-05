@@ -109,15 +109,15 @@ public final class PresenceMan extends PluginBase {
     }
 
     public static void setActivity(@NonNull Player player, @Nullable ApiActivity activity) {
-        if (Utils.isFromSameHost(player.getAddress())) return;
+        if (Utils.isFromSameHost(Utils.retrievePlayerData_ip(player))) return;
         if (!Server.getInstance().isRunning()) return;
         if (!player.isConnected()) return;
-        if (player.getLoginChainData().getXUID().isEmpty()) return;
+        if (Utils.retrievePlayerData_xuid(player).isEmpty()) return;
 
         JsonObject body = new JsonObject();
         new HashMap<String, String>(){{
-            put("ip", player.getAddress());
-            put("xuid", player.getLoginChainData().getXUID());
+            put("ip", Utils.retrievePlayerData_ip(player));
+            put("xuid", Utils.retrievePlayerData_xuid(player));
             put("server", PresenceMan.server);
         }}.forEach(body::addProperty);
         if (activity == null) body.addProperty("api_activity", (String)null);
@@ -150,15 +150,18 @@ public final class PresenceMan extends PluginBase {
         if (player.getLoginChainData().getXUID().isEmpty()) return;
         JsonObject body = new JsonObject();
         new HashMap<String, String>(){{
-            put("ip", player.getAddress());
-            put("xuid", player.getLoginChainData().getXUID());
+            put("ip", Utils.retrievePlayerData_ip(player));
+            put("xuid", Utils.retrievePlayerData_xuid(player));
         }}.forEach(body::addProperty);
 
         ApiRequest request = new ApiRequest(ApiRequest.URI_UPDATE_OFFLINE, body, true);
         request.header("Token", token);
         runTask(new BackendRequest(
                 request.serialize(),
-                response -> PresenceMan.presences.remove(player.getLoginChainData().getXUID()),
+                response -> {
+                    PresenceMan.presences.remove(Utils.retrievePlayerData_xuid(player));
+                    Utils.dropPlayerData(player);
+                },
                 error -> {},
                 10
         ));
@@ -169,14 +172,14 @@ public final class PresenceMan extends PluginBase {
     public static void save_skin(Player player, Skin skin) {
         if (!Server.getInstance().isRunning()) return;
         if (!player.isConnected()) return;
-        if (player.getLoginChainData().getXUID().isEmpty()) return;
+        if (Utils.retrievePlayerData_xuid(player).isEmpty()) return;
         String content = SkinUtils.convertSkinToBased64File(skin);
 
         if (content != null) {
             JsonObject body = new JsonObject();
             new HashMap<String, String>(){{
-                put("ip", player.getAddress());
-                put("xuid", player.getLoginChainData().getXUID());
+                put("ip", Utils.retrievePlayerData_ip(player));
+                put("xuid", Utils.retrievePlayerData_xuid(player));
                 put("skin", content);
             }}.forEach(body::addProperty);
             ApiRequest request = new ApiRequest(ApiRequest.URI_UPDATE_SKIN, body, true);

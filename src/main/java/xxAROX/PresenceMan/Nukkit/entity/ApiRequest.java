@@ -51,7 +51,7 @@ public final class ApiRequest {
         Gson gson = new Gson();
         JsonObject json = gson.fromJson(str, JsonObject.class);
         ApiRequest self = new ApiRequest(json.get("uri").getAsString(), json.get("body").getAsJsonObject(), json.get("post_method").getAsBoolean());
-        json.get("body").getAsJsonObject().asMap().forEach((key, value) -> self.headers.put(key, value.getAsString()));
+        json.get("headers").getAsJsonObject().asMap().forEach((key, value) -> self.headers.put(key, value.getAsString()));
         return self;
     }
 

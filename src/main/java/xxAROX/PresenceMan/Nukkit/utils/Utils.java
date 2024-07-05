@@ -6,10 +6,14 @@
 
 package xxAROX.PresenceMan.Nukkit.utils;
 
+import cn.nukkit.Player;
 import cn.nukkit.utils.Config;
+import com.google.gson.JsonObject;
+import lombok.AllArgsConstructor;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.HashMap;
 import java.util.Locale;
 
 public final class Utils {
@@ -33,6 +37,27 @@ public final class Utils {
         } catch (UnknownHostException e) {
             return false;
         }
+    }
+
+    public static HashMap<String, PlayerDataRow> rows = new HashMap<>();
+    public static String retrievePlayerData_xuid(Player player) {
+        return rows.containsKey(player.getAddress()) ? rows.get(player.getAddress()).xuid : player.getLoginChainData().getXUID();
+    }
+    public static String retrievePlayerData_ip(Player player) {
+        return rows.containsKey(player.getAddress()) ? rows.get(player.getAddress()).ip : player.getAddress();
+    }
+
+    public static void savePlayerData(Player player) {
+        JsonObject raw = player.getLoginChainData().getRawData();
+        if (raw.has("Waterdog_XUID") || raw.has("Waterdog_IP")) rows.put(player.getAddress(), new PlayerDataRow(raw.get("Waterdog_XUID").getAsString(), raw.get("Waterdog_IP").getAsString()));
+    }
+    public static void dropPlayerData(Player player) {
+        rows.remove(player.getAddress());
+    }
+    @AllArgsConstructor
+    public static class PlayerDataRow {
+        protected String xuid;
+        protected String ip;
     }
 
     public static class VersionComparison {

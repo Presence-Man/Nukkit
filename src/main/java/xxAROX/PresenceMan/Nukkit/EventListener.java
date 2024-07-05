@@ -18,7 +18,8 @@ public final class EventListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void PlayerLoginEvent(PlayerLoginEvent event){
-        if (Utils.isFromSameHost(event.getPlayer().getAddress())) return;
+        Utils.savePlayerData(event.getPlayer());
+        if (Utils.isFromSameHost(Utils.retrievePlayerData_ip(event.getPlayer()))) return;
         if (!PresenceMan.enable_default) return;
         if (event.getPlayer().getSkin() != null && PresenceMan.update_skin) PresenceMan.save_skin(event.getPlayer(), event.getPlayer().getSkin());
         PresenceMan.setActivity(event.getPlayer(), PresenceMan.default_activity);
@@ -26,13 +27,13 @@ public final class EventListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void PlayerChangeSkinEvent(PlayerChangeSkinEvent event){
-        if (Utils.isFromSameHost(event.getPlayer().getAddress())) return;
+        if (Utils.isFromSameHost(Utils.retrievePlayerData_ip(event.getPlayer()))) return;
         if (!event.isCancelled()) PresenceMan.save_skin(event.getPlayer(), event.getSkin());
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void PlayerQuitEvent(PlayerQuitEvent event){
-        if (Utils.isFromSameHost(event.getPlayer().getAddress())) return;
+        if (Utils.isFromSameHost(Utils.retrievePlayerData_ip(event.getPlayer()))) return;
         PresenceMan.presences.remove(event.getPlayer().getLoginChainData().getXUID());
         PresenceMan.offline(event.getPlayer());
     }
