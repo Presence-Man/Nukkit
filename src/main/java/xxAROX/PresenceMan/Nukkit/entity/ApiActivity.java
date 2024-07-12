@@ -16,19 +16,17 @@ package xxAROX.PresenceMan.Nukkit.entity;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.Accessors;
 import xxAROX.PresenceMan.Nukkit.PresenceMan;
 
 import javax.annotation.Nullable;
 
-@NoArgsConstructor
+@NoArgsConstructor @AllArgsConstructor
 @ToString
 @Getter @Setter @Accessors(chain = true)
 public class ApiActivity {
+    private Long client_id;
     public ActivityType type;
     public String state;
     public String details;
@@ -38,18 +36,7 @@ public class ApiActivity {
     public Integer party_max_player_count = null;
     public Integer party_player_count = null;
 
-    public ApiActivity(ActivityType type, String state, String details, Long end, String large_icon_key, String large_icon_text, Integer party_max_player_count, Integer party_player_count){
-        this.type = type;
-        this.state = state;
-        this.details = details;
-        this.end = end;
-        this.large_icon_key = large_icon_key;
-        this.large_icon_text = large_icon_text;
-        this.party_max_player_count = party_max_player_count;
-        this.party_player_count = party_player_count;
-    }
-
-    public ApiActivity(ActivityType type, String state, String details, Long end, String large_icon_key, String large_icon_text){
+    public ApiActivity(ActivityType type, String state, String details, Long end, String large_icon_key, String large_icon_text) {
         this.type = type;
         this.state = state;
         this.details = details;
@@ -60,7 +47,7 @@ public class ApiActivity {
 
     public JsonObject serialize(){
         JsonObject json = new JsonObject();
-        json.addProperty("client_id", PresenceMan.client_id);
+        json.addProperty("client_id", client_id);
         json.addProperty("type", type.toString());
         json.addProperty("state", state);
         json.addProperty("details", details);
@@ -74,6 +61,7 @@ public class ApiActivity {
 
     public static ApiActivity deserialize(String input){
         JsonObject json = new Gson().fromJson(input, JsonObject.class);
+        Long client_id = json.has("client_id") && !json.get("client_id").isJsonNull() ? json.get("client_id").getAsLong() : null;
         String __type = (json.has("type") && !json.get("type").isJsonNull() ? json.get("type").getAsString() : ActivityType.PLAYING.toString()).toUpperCase();
         ActivityType type = ActivityType.valueOf(__type);
         String state = (json.has("state") && !json.get("state").isJsonNull() ? json.get("state").getAsString() : null);
@@ -83,7 +71,7 @@ public class ApiActivity {
         String large_icon_text = (json.has("large_icon_text") && !json.get("large_icon_text").isJsonNull() ? json.get("large_icon_text").getAsString() : null);
         Integer party_max_player_count = (json.has("party_max_player_count") && !json.get("party_max_player_count").isJsonNull() ? json.get("party_max_player_count").getAsInt() : null);
         Integer party_player_count = (json.has("'party_player_count'") && !json.get("'party_player_count'").isJsonNull() ? json.get("'party_player_count'").getAsInt() : null);
-        return new ApiActivity(type, state, details, end, large_icon_key, large_icon_text, party_max_player_count, party_player_count);
+        return new ApiActivity(client_id, type, state, details, end, large_icon_key, large_icon_text, party_max_player_count, party_player_count);
     }
 
     public final static class Defaults {
