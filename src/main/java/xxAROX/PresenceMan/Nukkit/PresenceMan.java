@@ -43,9 +43,6 @@ public final class PresenceMan extends PluginBase {
         return instance;
     }
 
-    private static final int HEAD_SIZE_MAX = 512;
-    private static final int HEAD_SIZE_MIN = 16;
-
     private static String token = "undefined";
     public static String client_id = null;
     public static String server = "undefined";
