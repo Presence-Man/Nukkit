@@ -73,12 +73,15 @@ public final class PresenceMan extends PluginBase {
         String DEFAULT_LARGE_IMAGE_TEXT = (String) Utils.getconfigvalue(config, "default_presence.large_image_text", "DEFAULT_LARGE_IMAGE_TEXT", "{App.name} - v{App.version}");
 
         default_activity = new ApiActivity(
+                Long.parseLong(client_id),
                 ActivityType.PLAYING,
                 DEFAULT_STATE,
                 DEFAULT_DETAILS,
                 null,
                 DEFAULT_LARGE_IMAGE_KEY,
-                DEFAULT_LARGE_IMAGE_TEXT
+                DEFAULT_LARGE_IMAGE_TEXT,
+                null,
+                null
         );
     }
     @Override public void onEnable() {
