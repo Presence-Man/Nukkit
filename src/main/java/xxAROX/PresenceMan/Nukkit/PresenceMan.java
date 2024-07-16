@@ -152,7 +152,6 @@ public final class PresenceMan extends PluginBase {
      */
     public static void offline(Player player) {
         if (!Server.getInstance().isRunning()) return;
-        if (!player.isConnected()) return;
         if (player.getLoginChainData().getXUID().isEmpty()) return;
         JsonObject body = new JsonObject();
         new HashMap<String, String>(){{
